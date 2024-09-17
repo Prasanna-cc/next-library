@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1721897711222,
+      "tag": "0000_odd_stellaris",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1723543324359,
+      "tag": "0001_tan_wrecker",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1723880266678,
+      "tag": "0002_complex_talos",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1723880520746,
+      "tag": "0003_mighty_paibok",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1723881604694,
+      "tag": "0004_plain_screwball",
+      "breakpoints": true
+    }
+  ]
+}

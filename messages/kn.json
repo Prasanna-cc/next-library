@@ -1,0 +1,10 @@
+{
+    "Metadata": {
+        "title": "Knowledg",
+        "description": "Your online bookStore"
+    },
+    "HomePage": {
+        "title": "Hello world!",
+        "about": "Go to the about page"
+    }
+}
