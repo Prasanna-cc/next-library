@@ -10,6 +10,7 @@ import {
   Circle,
   CircleAlert,
   CircleCheck,
+  CircleDashed,
   XCircle,
 } from "lucide-react";
 import {
@@ -19,17 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const filterOptions = [
-  { value: "all", label: "Filter by status", icon: Circle },
-  { value: "requested", label: "Requested", icon: BookCopy },
-  { value: "issued", label: "Issued", icon: BookCheck },
-  { value: "approved", label: "Approved", icon: CircleCheck },
-  { value: "rejected", label: "Rejected", icon: XCircle },
-  { value: "cancelled", label: "Cancelled", icon: CircleAlert },
-  { value: "pending", label: "Pending", icon: BookDashedIcon },
-  { value: "returned", label: "Returned", icon: BookDown },
-];
+import { useTranslations } from "next-intl";
 
 interface FilterProps extends React.ComponentPropsWithoutRef<"div"> {}
 
@@ -40,6 +31,20 @@ export default function FilterComponent({ ...delegated }: FilterProps) {
   const [selectedFilter, setSelectedFilter] = useState<string | undefined>(
     undefined
   );
+  const r = useTranslations("Tables.TransactionTable.RequestStatus");
+  const b = useTranslations("Tables.TransactionTable.BookStatus");
+  const t = useTranslations("TransactionsPage");
+
+  const filterOptions = [
+    { value: "all", label: t("filterPlaceholder"), icon: Circle },
+    { value: "requested", label: r("requested"), icon: CircleDashed },
+    { value: "issued", label: b("issued"), icon: BookCheck },
+    { value: "approved", label: r("approved"), icon: CircleCheck },
+    { value: "rejected", label: r("rejected"), icon: XCircle },
+    { value: "cancelled", label: r("cancelled"), icon: CircleAlert },
+    { value: "pending", label: b("pending"), icon: BookDashedIcon },
+    { value: "returned", label: b("returned"), icon: BookDown },
+  ];
 
   useEffect(() => {
     // Initialize the selected filter based on the URL search params
@@ -63,7 +68,7 @@ export default function FilterComponent({ ...delegated }: FilterProps) {
   return (
     <div className="w-full flex items-center" {...delegated}>
       <Select value={selectedFilter} onValueChange={handleFilter}>
-        <SelectTrigger className="w-full min-w-[135px] rounded-full bg-slate-100 text-slate-500 font-medium">
+        <SelectTrigger className="w-full min-w-[170px] rounded-full bg-slate-100 text-slate-500 font-medium">
           <SelectValue placeholder="Filter by status" />
         </SelectTrigger>
         <SelectContent>

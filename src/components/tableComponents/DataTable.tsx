@@ -202,7 +202,7 @@ export const DataTable = <T extends AllowedTypes>({
       </Table>
       {table.getRowModel().rows.length === 0 && (
         <div className="flex text-sm text-slate-400 flex-col items-center pt-8">
-          <p>No Transactions found</p>
+          <p>No Match found</p>
         </div>
       )}
     </div>

@@ -3,8 +3,100 @@
         "title": "Knowledg",
         "description": "Your online bookStore"
     },
-    "HomePage": {
-        "title": "Knowledg",
-        "description": "Your online bookStore"
+    "LibraryName": {
+        "title": "Knowledg"
+    },
+    "MainNavMenu": {
+        "adminDashboardMenu": "Manage",
+        "allTransactions": "All Transactions",
+        "userTransactions": "My Transactions",
+        "books": "Books",
+        "members": "Members"
+    },
+    "Profile": {
+        "title": "Profile",
+        "requests": "My Requests",
+        "due": "Due List"
+    },
+    "BooksBrowsePage": {
+        "title": "Book Shelf",
+        "description": "Browse through our extensive collection of books available in the library. View detailed information on each book and request to borrow them easily.",
+        "searchPlaceholder": "Search Books..."
+    },
+    "BooksPage": {
+        "title": "Book Management",
+        "description": "Manage the library collection with ease. Search through all available books, edit or delete existing entries, and add new books to keep the collection up to date.",
+        "searchPlaceholder": "Search Books...",
+        "addButton": "Add new book"
+    },
+    "MembersPage": {
+        "title": "Member Management",
+        "description": "Oversee the library membership efficiently. Search through all registered members, update or remove their information, and add new members to ensure accurate records.",
+        "searchPlaceholder": "Search Members...",
+        "addButton": "Add new member"
+    },
+    "TransactionsPage": {
+        "title": "My Requests And Transactions",
+        "description": "See all your pending book requests in one place. Cancel requests that are not approved yet. Easily filter by current status of your request to find what you are looking for.",
+        "filterPlaceholder": "Filter by Status",
+        "onlyRequestSwitch": "Show only requests",
+        "searchPlaceholder": "Search transactions..."
+    },
+    "AllTransactionsPage": {
+        "title": "Transaction Management",
+        "description": "Manage all user requests for borrowing books in one place. Review, approve, or reject borrowing requests and confirm book returns to ensure efficient library management.",
+        "searchPlaceholder": "Search transactions..."
+    },
+    "Tables": {
+        "TransactionTable": {
+            "Headers": {
+                "bookTitle": "Book Title",
+                "memberName": "User Name",
+                "requestStatus": "Request Status",
+                "bookStatus": "Book Status",
+                "dueDate": "Due Date",
+                "dateOfIssue": "Date Of Issue",
+                "actions": "Actions"
+            },
+            "RequestStatus": {
+                "requested": "requested",
+                "approved": "approved",
+                "rejected": "rejected",
+                "cancelled": "cancelled"
+            },
+            "BookStatus": {
+                "pending": "pending",
+                "issued": "issued",
+                "returned": "returned",
+                "notIssued": "Not Issued"
+            },
+            "Actions": {
+                "cancel": "Cancel",
+                "approve": "Approve",
+                "reject": "Reject",
+                "confirmIssue": "Confirm Issue",
+                "confirmReturn": "Confirm Return"
+            }
+        },
+        "BooksTable": {
+            "title": "Book Title",
+            "available": "Available",
+            "author": "Author",
+            "publisher": "Publisher",
+            "genre": "Genre",
+            "isbnNo": "ISBN",
+            "pages": "Pages",
+            "total": "Total Copies",
+            "actions": "Actions"
+        },
+        "MembersTable": {
+            "name": "User Name",
+            "role": "Role",
+            "age": "Age",
+            "email": "Email",
+            "phone": "Phone",
+            "address": "Address",
+            "actions": "Actions"
+        }
     }
 }

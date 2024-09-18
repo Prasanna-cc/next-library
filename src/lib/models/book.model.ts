@@ -8,6 +8,7 @@ export interface IBookBase extends Row {
   isbnNo: string;
   numOfPages: number;
   totalNumOfCopies: number;
+  price: number;
 }
 export interface IBook extends IBookBase {
   id: number;

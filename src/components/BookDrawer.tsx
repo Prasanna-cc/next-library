@@ -29,7 +29,13 @@ import EditBookDialog from "./EditBookDialog";
 import { LoginDialog } from "./LoginForm";
 import { AppError } from "@/lib/core/appError";
 
-const BookDrawer = ({ book }: { book: IBook }) => {
+const BookDrawer = ({
+  book,
+  children,
+}: {
+  book: IBook;
+  children?: React.ReactNode;
+}) => {
   // const { session } = authController();
   const { data: session } = useSession();
   const [requestId, setRequestId] = useState<number | null>();
@@ -114,7 +120,8 @@ const BookDrawer = ({ book }: { book: IBook }) => {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button className="w-full">View</Button>
+        {/* <Button className="w-full">View</Button> */}
+        {children ?? <Button className="w-full">View</Button>}
       </DrawerTrigger>
       <DrawerContent className="flex flex-col h-[60%] w-full  p-4">
         <div className="min-w-[340px] flex">
@@ -183,7 +190,7 @@ const BookDrawer = ({ book }: { book: IBook }) => {
             onClick={handleBorrow}
             disabled={book.availableNumOfCopies === 0}
           >
-            Borrow
+            ₹ {book.price}
           </Button>
           <div
             className={clsx(

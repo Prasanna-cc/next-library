@@ -84,8 +84,10 @@ const MemberForm = ({ member, handleBack }: MemberFormProps) => {
     { label: "Email", name: "email", type: "text" },
     { label: "Phone", name: "phoneNumber", type: "text" },
     { label: "Address", name: "address", type: "text" },
-    // { label: "Password", name: "password", type: "text" },
   ];
+
+  if (!member)
+    formFields.push({ label: "Password", name: "password", type: "text" });
 
   const onSubmitCreate = async (data: IMemberBase) => {
     try {

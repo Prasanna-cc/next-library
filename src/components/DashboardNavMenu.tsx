@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
+// import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { MenuSquareIcon } from "lucide-react";
 import {
@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/menubar";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
-import { routing } from "@/i18n/routing";
+import { Link, routing } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -21,6 +22,7 @@ export function generateStaticParams() {
 
 export function DashboardNavMenu() {
   const { data: session } = useSession();
+  const t = useTranslations("MainNavMenu");
 
   return (
     <>
@@ -31,9 +33,7 @@ export function DashboardNavMenu() {
               <div className="flex items-center gap-1">
                 <MenuSquareIcon className="md:h-4 md:w-4" />
                 <span className="hidden md:inline-flex">
-                  {session?.user.role === "admin"
-                    ? "Manage"
-                    : "Manage Requests"}
+                  {t("adminDashboardMenu")}
                 </span>
               </div>
             </MenubarTrigger>
@@ -41,15 +41,18 @@ export function DashboardNavMenu() {
               <ul className="grid w-max gap-3 p-6">
                 <>
                   <ListItem
-                    title="All Transactions"
+                    title={t("allTransactions")}
                     href="/dashboard/admin/allTransactions"
                   />
                   <ListItem
-                    title="My Transactions"
+                    title={t("userTransactions")}
                     href="/dashboard/transactions"
                   />
-                  <ListItem title="Books" href="/dashboard/admin/books" />
-                  <ListItem title="Members" href="/dashboard/admin/members" />
+                  <ListItem title={t("books")} href="/dashboard/admin/books" />
+                  <ListItem
+                    title={t("members")}
+                    href="/dashboard/admin/members"
+                  />
                 </>
               </ul>
             </MenubarContent>
@@ -57,7 +60,7 @@ export function DashboardNavMenu() {
         </Menubar>
       ) : (
         <Link title="My Transactions" href="/dashboard/transactions">
-          <Button variant="ghost">My Transactions</Button>
+          <Button variant="ghost">{t("userTransactions")}</Button>
         </Link>
       )}
     </>

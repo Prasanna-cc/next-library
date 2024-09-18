@@ -22,7 +22,7 @@ export default function SearchComponent({ ...delegated }: SearchProps) {
     replace(`${pathName}?${params.toString()}`);
   }, 1000);
   return (
-    <div className=" border focus-within:outline focus-within:outline-offset-2 focus-within:outline-slate-400 rounded-full flex items-center justify-stretch">
+    <div className="w-full border focus-within:outline focus-within:outline-offset-2 focus-within:outline-slate-400 rounded-full flex items-center justify-stretch">
       <div className="px-2">
         <label htmlFor="search">
           <Search className="h-4 w-4" />
@@ -31,7 +31,7 @@ export default function SearchComponent({ ...delegated }: SearchProps) {
       <input
         {...delegated}
         className={
-          " w-full min-h-10 px-1 border-none rounded-full outline-none"
+          " w-full min-h-10 pr-1 border-none rounded-full outline-none"
         }
         id="search"
         type={"search"}

@@ -24,13 +24,15 @@ import {
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { toast } from "@/hooks/use-toast";
-import Link from "next/link";
+// import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 
 export const ProfileSheet = () => {
   const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState(false); // Track whether editing mode is on
   const handleBack = () => setIsEditing(false);
-  const [open, setOpen] = useState(false);
+  const t = useTranslations("Profile");
 
   return (
     <>
@@ -49,7 +51,9 @@ export const ProfileSheet = () => {
               ) : (
                 <CircleUser />
               )}
-              <span className="hidden md:inline-block md:px-1">Profile</span>
+              <span className="hidden md:inline-block md:px-1">
+                {t("title")}
+              </span>
             </div>
           </Button>
         </SheetTrigger>
@@ -58,7 +62,7 @@ export const ProfileSheet = () => {
           className="w-full max-w-lg overflow-y-scroll"
         >
           <SheetHeader>
-            <SheetTitle className="pb-8">Profile</SheetTitle>
+            <SheetTitle className="pb-8">{t("title")}</SheetTitle>
           </SheetHeader>
           <div>
             {/* Profile Section */}
@@ -71,8 +75,8 @@ export const ProfileSheet = () => {
                         className="w-10 h-10 rounded-full"
                         src={session.user.image}
                         alt="Profile"
-                        width={10}
-                        height={10}
+                        width={36}
+                        height={36}
                       />
                     ) : (
                       <User className="h-10 w-10" />
@@ -84,9 +88,9 @@ export const ProfileSheet = () => {
                       </p>
                     </div>
                   </div>
-                  <Button variant="ghost" onClick={() => setIsEditing(true)}>
+                  {/* <Button variant="ghost" onClick={() => setIsEditing(true)}>
                     <Edit className="h-4 w-4" />
-                  </Button>
+                  </Button> */}
                 </div>
 
                 <hr className="my-4" />
@@ -94,7 +98,7 @@ export const ProfileSheet = () => {
                 {/* My Requests Section */}
                 <div>
                   <div className="pb-3 flex justify-between items-center">
-                    <h4 className="font-semibold">My Requests</h4>
+                    <h4 className="font-semibold">{t("requests")}</h4>
                     <SheetClose asChild>
                       <Link href="/dashboard/transactions?onlyRequests=true">
                         <Button variant="ghost">
@@ -113,7 +117,7 @@ export const ProfileSheet = () => {
                 {/* My Transactions Section */}
                 <div>
                   <div className="pb-3 flex justify-between items-center">
-                    <h4 className="font-semibold">Due list</h4>
+                    <h4 className="font-semibold">{t("due")}</h4>
                     <SheetClose asChild>
                       <Link href="/dashboard/transactions">
                         <Button variant="ghost">

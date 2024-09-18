@@ -5,15 +5,20 @@ import CustomDialog from "@/components/CustomDialog";
 import BookForm from "@/components/displayAndInput/BookForm";
 import { Plus } from "lucide-react";
 import Search from "@/components/Search";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
+import ToolBar from "@/app/[locale]/(home)/ToolBar";
 
 export default async function BookManagementPage({
   searchParams,
+  params: { locale },
 }: {
   searchParams?: {
     query?: string;
     page?: string;
   };
+  params: { locale: string };
 }) {
+  unstable_setRequestLocale(locale);
   const ITEMS_PER_PAGE = 9;
   const page = searchParams?.page ? parseInt(searchParams.page, 10) : 1;
   const query = searchParams?.query || "";
@@ -23,20 +28,33 @@ export default async function BookManagementPage({
     search: query,
   }))!;
   const totalPages = Math.ceil(pagination.total / ITEMS_PER_PAGE);
+  const t = await getTranslations("BooksPage");
 
   return (
     <div className="w-full px-4 py-8 flex flex-col justify-between gap-6">
       <div className="flex flex-col gap-1">
-        <h1 className="text-3xl font-bold">Book Management</h1>
-        <span className="text-slate-500 text-sm">
-          Manage the library collection with ease. Search through all available
-          books, edit or delete existing entries, and add new books to keep the
-          collection up to date.
-        </span>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
+        <span className="text-slate-500 text-sm">{t("description")}</span>
       </div>
-      <div className="flex justify-between">
-        <Search placeholder="Search books..." />
-        <CustomDialog
+      <div className="flex flex-col gap-3 justify-between">
+        <ToolBar
+          firstHalf={<Search placeholder={t("searchPlaceholder")} />}
+          secondHalf={
+            <CustomDialog
+              triggerText={
+                <span className="flex gap-1 justify-center items-center">
+                  <Plus className="w-4 h-4" />
+                  {t("addButton")}
+                </span>
+              }
+              triggerButtonClass="rounded-full"
+            >
+              <BookForm />
+            </CustomDialog>
+          }
+        />
+        {/* <Search placeholder="Search books..." /> */}
+        {/* <CustomDialog
           triggerText={
             <span className="flex gap-1 justify-center items-center">
               <Plus className="w-4 h-4" />
@@ -46,9 +64,8 @@ export default async function BookManagementPage({
           triggerButtonClass="rounded-full"
         >
           <BookForm />
-        </CustomDialog>
-      </div>
-      {books.length !== 0 ? (
+        </CustomDialog> */}
+
         <TableWithPreview
           currentPage={page}
           totalPages={totalPages}
@@ -61,11 +78,7 @@ export default async function BookManagementPage({
             "actions",
           ]}
         />
-      ) : (
-        <div className="flex text-sm text-slate-400 flex-col items-center ">
-          <p>No Books found</p>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

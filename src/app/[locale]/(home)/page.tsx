@@ -1,7 +1,11 @@
 import { searchBooks } from "@/lib/actions";
 import BookCard from "@/components/BookCard";
-import SearchAndPagination from "@/app/[locale]/(home)/SearchAndPagination";
+import ToolBar from "@/app/[locale]/(home)/ToolBar";
 import { unstable_setRequestLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { useLocale } from "next-intl";
+import SearchComponent from "@/components/Search";
+import PaginationComponent from "@/components/Pagination";
 
 const ITEMS_PER_PAGE = 9;
 
@@ -24,35 +28,34 @@ export default async function BooksPage({
     search: query,
   }))!;
   const totalPages = Math.ceil(pagination.total / ITEMS_PER_PAGE);
+  const t = await getTranslations("BooksBrowsePage");
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Book Shelf</h1>
-      <SearchAndPagination
-        placeholder="Search books..."
-        page={page}
-        totalPages={totalPages}
-      />
-      {/* <div className="w-full flex flex-col pb-0 gap-3 justify-between md:pb-3 md:flex-row">
-        <div className="w-full flex justify-start">
-          <SearchComponent  />
-        </div>
-        <hr className="md:hidden" />
-        <div className="w-full justify-center flex md:justify-end">
-          <PaginationComponent currentPage={page} totalPages={totalPages} />
-        </div>
+    <div className="container flex flex-col gap-8 mx-auto px-4 py-8">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
+        <span className="text-slate-500 text-sm">{t("description")}</span>
       </div>
-      <hr className="hidden md:block" /> */}
-      <div className="w-full grid py-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {books.length === 0 ? (
-          <p>No books found.</p>
-        ) : (
-          books.map((book) => (
-            <div key={book.id} className="flex justify-center">
-              <BookCard book={book} />
-            </div>
-          ))
-        )}
+      <hr />
+      <div>
+        <ToolBar
+          firstHalf={<SearchComponent placeholder={t("searchPlaceholder")} />}
+          secondHalf={
+            <PaginationComponent currentPage={page} totalPages={totalPages} />
+          }
+          responsive
+        />
+        <div className="w-full grid py-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {books.length === 0 ? (
+            <p>No books found.</p>
+          ) : (
+            books.map((book) => (
+              <div key={book.id} className="flex justify-center">
+                <BookCard book={book} />
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

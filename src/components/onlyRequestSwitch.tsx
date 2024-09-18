@@ -4,12 +4,14 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useTranslations } from "next-intl";
 
 export default function OnlyRequestSwitch() {
   const searchParams = useSearchParams();
   const pathName = usePathname();
   const { replace } = useRouter();
   const [isUnclaimed, setIsUnclaimed] = useState(false);
+  const t = useTranslations("TransactionsPage");
 
   useEffect(() => {
     const currentUnclaimed = searchParams.get("onlyRequests");
@@ -36,7 +38,7 @@ export default function OnlyRequestSwitch() {
         onCheckedChange={handleSwitch}
       />
       <Label htmlFor="unclaimed-mode" className="text-sm text-slate-500">
-        Show only requests
+        {t("onlyRequestSwitch")}
       </Label>
     </div>
   );

@@ -1,6 +1,6 @@
 import mysql from "mysql2/promise";
 import { drizzle } from "drizzle-orm/mysql2";
-import { Books, Members, MemberSessions, Transactions } from "./drizzleSchema";
+import { Books, Members, Transactions } from "./drizzleSchema";
 import { migrate } from "drizzle-orm/mysql2/migrator";
 import { AppEnvs } from "../../core/read-env";
 
@@ -58,4 +58,4 @@ export class DrizzleAdapter {
 }
 
 const dbManager = new DrizzleAdapter(AppEnvs.DATABASE_URL);
-export { dbManager, Books, Members, MemberSessions, Transactions };
+export { dbManager, Books, Members, Transactions };

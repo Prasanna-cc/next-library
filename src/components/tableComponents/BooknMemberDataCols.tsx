@@ -10,16 +10,17 @@ import { onDeleteBook } from "@/components/EditBookDialog";
 import { onDeleteMember } from "@/components/displayAndInput/MemberForm";
 import { selectColumn } from "./SelectColumn";
 import { sortableColumnHeader } from "./SortableColumnHeader";
+import { translatedHeader } from "./RowActions";
 
 export const booksColumns: ColumnDef<Partial<IBook>>[] = [
   ...selectColumn<Partial<IBook>>(),
   {
     accessorKey: "title",
-    header: sortableColumnHeader("Book Title"),
+    header: sortableColumnHeader("title", "books"),
   },
   {
     accessorKey: "availableNumOfCopies",
-    header: sortableColumnHeader("Available"),
+    header: sortableColumnHeader("available", "books"),
     cell: ({ row }) => {
       const available = row.original.availableNumOfCopies;
       return (
@@ -39,31 +40,31 @@ export const booksColumns: ColumnDef<Partial<IBook>>[] = [
   },
   {
     accessorKey: "author",
-    header: sortableColumnHeader("Author"),
+    header: sortableColumnHeader("author", "books"),
   },
   {
     accessorKey: "publisher",
-    header: sortableColumnHeader("Publisher"),
+    header: sortableColumnHeader("publisher", "books"),
   },
   {
     accessorKey: "genre",
-    header: sortableColumnHeader("Genre"),
+    header: sortableColumnHeader("genre", "books"),
   },
   {
     accessorKey: "isbnNo",
-    header: "ISBN",
+    header: translatedHeader({ table: "BooksTable", value: "isbnNo" }),
   },
   {
     accessorKey: "numOfPages",
-    header: sortableColumnHeader("Pages"),
+    header: sortableColumnHeader("pages", "books"),
   },
   {
     accessorKey: "totalNumOfCopies",
-    header: sortableColumnHeader("Total"),
+    header: sortableColumnHeader("total", "books"),
   },
   {
     id: "actions",
-    header: "Actions",
+    header: translatedHeader(),
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
@@ -79,10 +80,10 @@ export const booksColumns: ColumnDef<Partial<IBook>>[] = [
 
 export const memberColumns: ColumnDef<Partial<IMember>>[] = [
   ...selectColumn<Partial<IMember>>(),
-  { accessorKey: "name", header: sortableColumnHeader("User Name") },
+  { accessorKey: "name", header: sortableColumnHeader("name", "members") },
   {
     accessorKey: "role",
-    header: "Role",
+    header: translatedHeader({ table: "MembersTable", value: "role" }),
     cell: ({ row }) => {
       const role = row.original.role;
       return (
@@ -94,13 +95,19 @@ export const memberColumns: ColumnDef<Partial<IMember>>[] = [
       );
     },
   },
-  { accessorKey: "age", header: sortableColumnHeader("Age") },
-  { accessorKey: "email", header: sortableColumnHeader("Email") },
-  { accessorKey: "phoneNumber", header: sortableColumnHeader("Phone") },
-  { accessorKey: "address", header: sortableColumnHeader("Address") },
+  { accessorKey: "age", header: sortableColumnHeader("age", "members") },
+  { accessorKey: "email", header: sortableColumnHeader("email", "members") },
+  {
+    accessorKey: "phoneNumber",
+    header: sortableColumnHeader("phone", "members"),
+  },
+  {
+    accessorKey: "address",
+    header: sortableColumnHeader("address", "members"),
+  },
   {
     id: "actions",
-    header: "Actions",
+    header: translatedHeader(),
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">

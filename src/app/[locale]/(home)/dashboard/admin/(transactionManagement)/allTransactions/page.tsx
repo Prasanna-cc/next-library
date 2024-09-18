@@ -1,5 +1,5 @@
 import { DataTable } from "@/components/tableComponents/DataTable";
-import SearchAndPagination from "@/app/[locale]/(home)/SearchAndPagination";
+import ToolBar from "@/app/[locale]/(home)/ToolBar";
 import { TableSkeleton } from "@/components/skeletons/TableSkeleton";
 import { allTransactionColumns } from "@/components/tableComponents/TransactionDataColumns";
 import { getTransactions } from "@/lib/actions";
@@ -12,6 +12,7 @@ import Search from "@/components/Search";
 import FilterComponent from "@/components/TransactionFilters";
 import { BookStatus, RequestStatus } from "@/lib/core/types";
 import OnlyRequestSwitch from "@/components/onlyRequestSwitch";
+import { getTranslations } from "next-intl/server";
 
 async function AllTransactionsPage({
   searchParams,
@@ -45,40 +46,39 @@ async function AllTransactionsPage({
   ))!;
 
   const totalPages = Math.ceil(pagination.total / ITEMS_PER_PAGE);
+  const t = await getTranslations("AllTransactionsPage");
 
   return (
     <div className="w-full container py-8 flex flex-col justify-between gap-6">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold">Transaction Management</h1>
-        <span className="text-slate-500 text-sm">
-          Manage all user requests for borrowing books in one place. Review,
-          approve, or reject borrowing requests and confirm book returns to
-          ensure efficient library management.
-        </span>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
+        <span className="text-slate-500 text-sm">{t("description")}</span>
       </div>
       <hr />
-      <div className="flex justify-start gap-2">
-        <Search placeholder="Search transactions..." />
-        <FilterComponent className="max-w-52" />
-        {/* <UnclaimedSwitch /> */}
-      </div>
-
-      <Suspense fallback={<TableSkeleton cols={5} />}>
-        <DataTable
-          currentPage={page}
-          totalPages={totalPages}
-          data={allTransactions}
-          columns={allTransactionColumns}
-          defaultVisibleColumns={[
-            "bookTitle",
-            "memberName",
-            "requestStatus",
-            "bookStatus",
-            "dueDate",
-            "actions",
-          ]}
+      <div className="flex flex-col gap-3 justify-between items-center">
+        <ToolBar
+          firstHalf={<Search placeholder={t("searchPlaceholder")} />}
+          secondHalf={<FilterComponent className="max-w-52" />}
         />
-      </Suspense>
+        {/* <UnclaimedSwitch /> */}
+
+        <Suspense fallback={<TableSkeleton cols={5} />}>
+          <DataTable
+            currentPage={page}
+            totalPages={totalPages}
+            data={allTransactions}
+            columns={allTransactionColumns}
+            defaultVisibleColumns={[
+              "bookTitle",
+              "memberName",
+              "requestStatus",
+              "bookStatus",
+              "dueDate",
+              "actions",
+            ]}
+          />
+        </Suspense>
+      </div>
     </div>
   );
 }

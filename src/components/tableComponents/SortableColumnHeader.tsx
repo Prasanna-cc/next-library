@@ -2,6 +2,7 @@ import { IBook } from "@/lib/models/book.model";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { Button } from "../ui/button";
 import { Column } from "@tanstack/react-table";
+import { useTranslations } from "next-intl";
 
 const SortButton = ({
   column,
@@ -30,13 +31,25 @@ const SortButton = ({
   );
 };
 
-export const sortableColumnHeader = (headerName: string) => {
+export const sortableColumnHeader = (
+  headerName: string,
+  table?: "books" | "members"
+) => {
   const SortableHeader = ({
     column,
   }: {
     column: Column<Partial<IBook>, unknown>;
   }) => {
-    return <SortButton column={column} headerName={headerName} />;
+    const t = useTranslations(
+      `Tables.${
+        table === "books"
+          ? "BooksTable"
+          : table === "members"
+          ? "MembersTable"
+          : "TransactionTable.Headers"
+      }`
+    );
+    return <SortButton column={column} headerName={t(headerName)} />;
   };
 
   return SortableHeader;

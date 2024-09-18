@@ -1,5 +1,5 @@
 import { DataTable } from "@/components/tableComponents/DataTable";
-import SearchAndPagination from "@/app/[locale]/(home)/SearchAndPagination";
+import ToolBar from "@/app/[locale]/(home)/ToolBar";
 import { TableSkeleton } from "@/components/skeletons/TableSkeleton";
 import { transactionColumns } from "@/components/tableComponents/TransactionDataColumns";
 import { getTransactions } from "@/lib/actions";
@@ -12,9 +12,11 @@ import { BookStatus, RequestStatus } from "@/lib/core/types";
 import FilterComponent from "@/components/TransactionFilters";
 import OnlyRequestSwitch from "@/components/onlyRequestSwitch";
 import Search from "@/components/Search";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
 async function MyTransactionsPage({
   searchParams,
+  params: { locale },
 }: {
   searchParams?: {
     query?: string;
@@ -22,7 +24,9 @@ async function MyTransactionsPage({
     filter?: BookStatus | RequestStatus;
     onlyRequests?: "true" | undefined;
   };
+  params: { locale: string };
 }) {
+  unstable_setRequestLocale(locale);
   const session = await getServerSession(authOptions);
   if (!session) redirect("/signin");
 
@@ -45,42 +49,49 @@ async function MyTransactionsPage({
   ))!;
 
   const totalPages = Math.ceil(pagination.total / ITEMS_PER_PAGE);
+  const t = await getTranslations("TransactionsPage");
 
   return (
     <div className="w-full container py-8 flex flex-col justify-between gap-6">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold">My Requests And Transactions</h1>
-        <span className="text-slate-500 text-sm">
-          See all your pending book requests in one place. Cancel requests that
-          are not approved yet. Easily filter by current status of your request
-          to find what you are looking for.
-        </span>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
+        <span className="text-slate-500 text-sm">{t("description")}</span>
       </div>
       <hr />
-      <div className="flex justify-between items-center">
-        <div className="w-full flex gap-2">
+      <div className="flex flex-col gap-3 justify-between items-center">
+        <ToolBar
+          firstHalf={<Search placeholder={t("searchPlaceholder")} />}
+          secondHalf={
+            <>
+              <FilterComponent className="max-w-52" />
+              <OnlyRequestSwitch />
+            </>
+          }
+          responsive
+        />
+        {/* <div className="w-full flex gap-2">
           <Search placeholder="Search transactions..." />
           <FilterComponent className="max-w-52" />
-        </div>
-        <div className="w-full flex justify-end">
+        </div> */}
+        {/* <div className="w-full flex justify-end">
           <OnlyRequestSwitch />
-        </div>
+        </div> */}
+        <Suspense fallback={<TableSkeleton cols={5} />}>
+          <DataTable
+            currentPage={page}
+            totalPages={totalPages}
+            data={transactions}
+            columns={transactionColumns}
+            defaultVisibleColumns={[
+              "bookTitle",
+              "requestStatus",
+              "bookStatus",
+              "dueDate",
+              "actions",
+            ]}
+          />
+        </Suspense>
       </div>
-      <Suspense fallback={<TableSkeleton cols={5} />}>
-        <DataTable
-          currentPage={page}
-          totalPages={totalPages}
-          data={transactions}
-          columns={transactionColumns}
-          defaultVisibleColumns={[
-            "bookTitle",
-            "requestStatus",
-            "bookStatus",
-            "dueDate",
-            "actions",
-          ]}
-        />
-      </Suspense>
     </div>
   );
 }

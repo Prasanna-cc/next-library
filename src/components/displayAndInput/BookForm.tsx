@@ -43,6 +43,7 @@ const BookForm = ({ book, handleBack }: BookFormProps) => {
       name: "totalNumOfCopies",
       type: "number",
     },
+    { label: "Price", name: "price", type: "number" },
   ];
 
   const onSubmitCreate = async (data: IBook) => {

@@ -5,6 +5,8 @@ import CustomDialog from "@/components/CustomDialog";
 import { Plus } from "lucide-react";
 import MemberForm from "@/components/displayAndInput/MemberForm";
 import Search from "@/components/Search";
+import ToolBar from "@/app/[locale]/(home)/ToolBar";
+import { getTranslations } from "next-intl/server";
 
 export default async function MemberManagementPage({
   searchParams,
@@ -23,19 +25,32 @@ export default async function MemberManagementPage({
     search: query,
   }))!;
   const totalPages = Math.ceil(pagination.total / ITEMS_PER_PAGE);
+  const t = await getTranslations("MembersPage");
 
   return (
     <div className="w-full px-4 py-8 flex flex-col justify-between gap-6">
       <div className="flex flex-col gap-1">
-        <h1 className="text-3xl font-bold">Member Management</h1>
-        <span className="text-slate-500 text-sm">
-          Oversee the library membership efficiently. Search through all
-          registered members, update or remove their information, and add new
-          members to ensure accurate records.
-        </span>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
+        <span className="text-slate-500 text-sm">{t("description")}</span>
       </div>
-      <div className="flex justify-between">
-        <Search placeholder="Search members..." />
+      <div className="flex flex-col gap-3 justify-between">
+        <ToolBar
+          firstHalf={<Search placeholder={t("searchPlaceholder")} />}
+          secondHalf={
+            <CustomDialog
+              triggerText={
+                <span className="flex gap-1 justify-center items-center">
+                  <Plus className="w-4 h-4" />
+                  {t("addButton")}
+                </span>
+              }
+              triggerButtonClass="rounded-full"
+            >
+              <MemberForm />
+            </CustomDialog>
+          }
+        />
+        {/* <Search placeholder="Search members..." />
         <CustomDialog
           triggerText={
             <span className="flex gap-1 justify-center items-center">
@@ -46,9 +61,7 @@ export default async function MemberManagementPage({
           triggerButtonClass="rounded-full"
         >
           <MemberForm />
-        </CustomDialog>
-      </div>
-      {members.length !== 0 ? (
+        </CustomDialog> */}
         <TableWithPreview
           currentPage={page}
           totalPages={totalPages}
@@ -56,11 +69,7 @@ export default async function MemberManagementPage({
           columns={memberColumns}
           defaultTableColumns={["name", "role"]}
         />
-      ) : (
-        <div className="flex text-sm text-slate-400 flex-col items-center ">
-          <p>No Members found</p>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

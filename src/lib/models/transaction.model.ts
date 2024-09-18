@@ -13,8 +13,12 @@ export interface ITransaction extends ITransactionBase {
 }
 
 export interface ITransactionTable
-  extends Omit<ITransaction, "bookId" | "memberId" | "requestStatus"> {
+  extends Omit<
+    ITransaction,
+    "bookId" | "memberId" | "requestStatus" | "bookStatus"
+  > {
   memberName: string | null;
   bookTitle: string | null;
+  bookStatus: BookStatus | "not issued";
   requestStatus: RequestStatus | "cancelled";
 }

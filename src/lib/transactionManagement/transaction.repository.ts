@@ -383,9 +383,9 @@ export class TransactionRepository
       }
     }
     const customOrder = sql`CASE 
-    WHEN ${Transactions.requestStatus} = 'requested' THEN 1
+    WHEN ${Transactions.requestStatus} = 'approved' THEN 1
     WHEN ${Transactions.requestStatus} = 'rejected' THEN 2
-    WHEN ${Transactions.requestStatus} = 'approved' THEN 3
+    WHEN ${Transactions.requestStatus} = 'requested' THEN 3
     ELSE 4
   END`;
 

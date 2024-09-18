@@ -12,6 +12,7 @@ import {
 } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
+import { LocaleSelector } from "@/components/LocaleSelecter";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -51,6 +52,7 @@ export default async function RootLayout({
         <body className={inter.className}>
           <NextIntlClientProvider messages={messages}>
             <Navbar>
+              <LocaleSelector />
               <MainNavMenu />
             </Navbar>
             <main>{children}</main>
