@@ -251,9 +251,16 @@ export const AdminActions = ({
   }
 };
 
-export const translatedLabel = (nameSpace: string, value: string) => {
+export const TranslatedLabel = ({
+  nameSpace,
+  value,
+}: {
+  nameSpace: string;
+  value: string;
+}) => {
   const t = useTranslations(nameSpace);
-  return t(value);
+
+  return <span>{t(value)} </span>;
 };
 
 export const translatedHeader = (other?: { table: string; value: string }) => {

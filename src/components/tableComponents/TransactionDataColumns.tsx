@@ -20,7 +20,7 @@ import {
   AdminActions,
   RequestCancelAction,
   translatedHeader,
-  translatedLabel,
+  TranslatedLabel,
 } from "./RowActions";
 
 type BadgeVariant =
@@ -65,11 +65,12 @@ export const transactionColumns: ColumnDef<Partial<ITransactionTable>>[] = [
         <Badge variant={badgeVariant} className="py-1 px-2">
           <div className="flex gap-1 items-center">
             {icon}
-            {requestStatus &&
-              translatedLabel(
-                "Tables.TransactionTable.RequestStatus",
-                requestStatus
-              )}
+            {requestStatus && (
+              <TranslatedLabel
+                nameSpace="Tables.TransactionTable.RequestStatus"
+                value={requestStatus}
+              />
+            )}
           </div>
         </Badge>
       );
@@ -101,11 +102,12 @@ export const transactionColumns: ColumnDef<Partial<ITransactionTable>>[] = [
         <Badge variant={badgeVariant} className="py-1 px-2">
           <div className="flex gap-1 items-center">
             {icon}
-            {bookStatus &&
-              translatedLabel(
-                "Tables.TransactionTable.BookStatus",
-                bookStatus === "not issued" ? "notIssued" : bookStatus
-              )}
+            {bookStatus && (
+              <TranslatedLabel
+                nameSpace="Tables.TransactionTable.BookStatus"
+                value={bookStatus === "not issued" ? "notIssued" : bookStatus}
+              />
+            )}
           </div>
         </Badge>
       );
@@ -167,11 +169,12 @@ export const allTransactionColumns: ColumnDef<Partial<ITransactionTable>>[] = [
         <Badge variant={badgeVariant} className="py-1 px-2">
           <div className="flex gap-1 items-center">
             {icon}
-            {requestStatus &&
-              translatedLabel(
-                "Tables.TransactionTable.RequestStatus",
-                requestStatus
-              )}
+            {requestStatus && (
+              <TranslatedLabel
+                nameSpace="Tables.TransactionTable.RequestStatus"
+                value={requestStatus}
+              />
+            )}
           </div>
         </Badge>
       );
@@ -203,11 +206,12 @@ export const allTransactionColumns: ColumnDef<Partial<ITransactionTable>>[] = [
         <Badge variant={badgeVariant} className="py-1 px-2">
           <div className="flex gap-1 items-center">
             {icon}
-            {bookStatus &&
-              translatedLabel(
-                "Tables.TransactionTable.BookStatus",
-                bookStatus === "not issued" ? "notIssued" : bookStatus
-              )}
+            {bookStatus && (
+              <TranslatedLabel
+                nameSpace="Tables.TransactionTable.BookStatus"
+                value={bookStatus === "not issued" ? "notIssued" : bookStatus}
+              />
+            )}
           </div>
         </Badge>
       );

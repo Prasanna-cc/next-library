@@ -7,41 +7,22 @@ import {
 } from "@/lib/models/transaction.model";
 import { ITransactionBaseSchema } from "@/lib/models/transaction.schema";
 import { IBook } from "@/lib/models/book.schema";
-import {
-  IPagedResponse,
-  IPageRequest,
-  ITransactionPageRequest,
-} from "@/lib/core/pagination";
+import { IPagedResponse, ITransactionPageRequest } from "@/lib/core/pagination";
+import { and, count, eq, isNull, like, not, or, sql, SQL } from "drizzle-orm";
+import { AppError } from "../core/appError";
+import { VercelPgDatabase } from "drizzle-orm/vercel-postgres";
+import { db } from "../database/drizzle/db";
 import {
   Books,
-  DrizzleAdapter,
-  Members,
   Transactions,
-} from "@/lib/database/drizzle/drizzleAdapter";
-import { MySql2Database } from "drizzle-orm/mysql2/driver";
-import {
-  and,
-  count,
-  eq,
-  is,
-  isNull,
-  like,
-  not,
-  or,
-  sql,
-  SQL,
-} from "drizzle-orm";
-import { AppError } from "../core/appError";
+  Members,
+} from "@/lib/database/drizzle/drizzleSchema";
 
 export class TransactionRepository
   implements
     Omit<IRepository<ITransactionBase, ITransaction>, "delete" | "list">
 {
-  private db: MySql2Database<Record<string, unknown>>;
-  private bookRepo: BookRepository = new BookRepository(this.dbManager);
-  constructor(private readonly dbManager: DrizzleAdapter) {
-    this.db = this.dbManager.getDrizzlePoolDb();
-  }
+  private bookRepo: BookRepository = new BookRepository();
 
   async create(data: ITransactionBase): Promise<ITransaction | undefined> {
     const validatedData = ITransactionBaseSchema.parse(data);
@@ -62,7 +43,7 @@ export class TransactionRepository
         };
 
         // Execution of queries:
-        const createdTrxnId = await this.db.transaction(async (trxn) => {
+        const createdTrxnId = await db.transaction(async (trxn) => {
           await trxn
             .update(Books)
             .set(updatedBook)
@@ -71,10 +52,10 @@ export class TransactionRepository
           const [result] = await trxn
             .insert(Transactions)
             .values(newTransaction)
-            .$returningId();
+            .returning();
           return result.id;
         });
-        const issuedTransaction = (await this.getById(createdTrxnId))!; //{ id: result.id, ...newTransaction };
+        const issuedTransaction = (await this.getById(createdTrxnId))!;
         return issuedTransaction;
       } else {
         throw new AppError(
@@ -106,7 +87,7 @@ export class TransactionRepository
         };
 
         // Execution of queries:
-        const issued = await this.db
+        const issued = await db
           .update(Transactions)
           .set(updatedTransaction)
           .where(eq(Transactions.id, transaction.id));
@@ -128,7 +109,7 @@ export class TransactionRepository
         transaction.bookStatus = "issued";
 
         // Execution of queries:
-        const issued = await this.db
+        const issued = await db
           .update(Transactions)
           .set(transaction)
           .where(eq(Transactions.id, transaction.id));
@@ -164,17 +145,17 @@ export class TransactionRepository
         transaction.bookStatus = null;
 
         // Execution of queries:
-        const updated = await this.db.transaction(async (trxn) => {
+        const updated = await db.transaction(async (trxn) => {
           await trxn
             .update(Books)
             .set(updatedBook)
             .where(eq(Books.id, updatedBook.id));
 
-          const [result] = await trxn
+          const result = await trxn
             .update(Transactions)
             .set(transaction)
             .where(eq(Transactions.id, transaction.id));
-          return result.affectedRows;
+          return result.rowCount;
         });
         if (updated) {
           return transaction;
@@ -212,17 +193,17 @@ export class TransactionRepository
         transaction.bookStatus = null;
 
         // Execution of queries:
-        const updated = await this.db.transaction(async (trxn) => {
+        const updated = await db.transaction(async (trxn) => {
           await trxn
             .update(Books)
             .set(updatedBook)
             .where(eq(Books.id, updatedBook.id));
 
-          const [result] = await trxn
+          const result = await trxn
             .update(Transactions)
             .set(transaction)
             .where(eq(Transactions.id, transaction.id));
-          return result.affectedRows;
+          return result.rowCount;
         });
         if (updated) {
           return transaction;
@@ -259,17 +240,17 @@ export class TransactionRepository
         transaction.bookStatus = "returned";
 
         // Execution of queries:
-        const updated = await this.db.transaction(async (trxn) => {
+        const updated = await db.transaction(async (trxn) => {
           await trxn
             .update(Books)
             .set(updatedBook)
             .where(eq(Books.id, updatedBook.id));
 
-          const [result] = await trxn
+          const result = await trxn
             .update(Transactions)
             .set(transaction)
             .where(eq(Transactions.id, transaction.id));
-          return result.affectedRows;
+          return result.rowCount;
         });
         if (updated) {
           return transaction;
@@ -315,7 +296,7 @@ export class TransactionRepository
         break;
       }
       case "allRequests": {
-        const [member] = await this.db
+        const [member] = await db
           .select({ role: Members.role })
           .from(Members)
           .where(eq(Members.id, params.id));
@@ -329,7 +310,7 @@ export class TransactionRepository
           );
       }
       case "allTransactions": {
-        const [member] = await this.db
+        const [member] = await db
           .select({ role: Members.role })
           .from(Members)
           .where(eq(Members.id, params.id));
@@ -356,32 +337,43 @@ export class TransactionRepository
     if (params.filterBy) {
       const mappedFilterValue =
         params.filterBy !== "cancelled" ? params.filterBy : null;
-      const filterValue = mappedFilterValue
-        ? `%${mappedFilterValue.toLowerCase()}%`
-        : mappedFilterValue;
-      if (!searchWhereClause) {
-        if (filterValue)
-          searchWhereClause = or(
-            like(Transactions.requestStatus, filterValue),
-            like(Transactions.bookStatus, filterValue)
-          );
-        else searchWhereClause = isNull(Transactions.requestStatus);
+
+      // If mappedFilterValue is null, we directly set the where clause for null requestStatus
+      if (!mappedFilterValue) {
+        searchWhereClause = searchWhereClause
+          ? and(searchWhereClause, isNull(Transactions.requestStatus))
+          : isNull(Transactions.requestStatus);
       } else {
-        if (filterValue)
-          searchWhereClause = and(
-            searchWhereClause,
-            or(
-              like(Transactions.requestStatus, filterValue),
-              like(Transactions.bookStatus, filterValue)
+        const validRequestStatuses = ["requested", "approved", "rejected"];
+        const validBookStatuses = ["pending", "issued", "returned"];
+
+        // Create the appropriate filter based on the mappedFilterValue
+        const requestStatusFilter = validRequestStatuses.includes(
+          mappedFilterValue
+        )
+          ? eq(
+              Transactions.requestStatus,
+              mappedFilterValue as "requested" | "approved" | "rejected"
             )
-          );
-        else
-          searchWhereClause = and(
-            searchWhereClause,
-            isNull(Transactions.requestStatus)
-          );
+          : undefined;
+
+        const bookStatusFilter = validBookStatuses.includes(mappedFilterValue)
+          ? eq(
+              Transactions.bookStatus,
+              mappedFilterValue as "pending" | "issued" | "returned"
+            )
+          : undefined;
+
+        // Set the searchWhereClause based on the available filters
+        const newFilter = requestStatusFilter || bookStatusFilter;
+        if (newFilter) {
+          searchWhereClause = searchWhereClause
+            ? and(searchWhereClause, newFilter)
+            : newFilter;
+        }
       }
     }
+
     const customOrder = sql`CASE 
     WHEN ${Transactions.requestStatus} = 'approved' THEN 1
     WHEN ${Transactions.requestStatus} = 'rejected' THEN 2
@@ -396,18 +388,13 @@ export class TransactionRepository
         id: Transactions.id,
         bookTitle: Books.title,
         memberName: Members.name,
-        requestStatus:
-          sql`COALESCE(${Transactions.requestStatus}, 'cancelled')`.as(
-            "requestStatus"
-          ),
-        bookStatus: sql`COALESCE(${Transactions.bookStatus}, 'not issued')`.as(
-          "bookStatus"
-        ),
+        requestStatus: Transactions.requestStatus,
+        bookStatus: Transactions.bookStatus,
         dueDate: Transactions.dueDate,
         dateOfIssue: Transactions.dateOfIssue,
       };
       if (searchWhereClause) {
-        matchedTransactions = (await this.db
+        matchedTransactions = (await db
           .select(transactionDetails)
           .from(Transactions)
           .leftJoin(Books, eq(Transactions.bookId, Books.id))
@@ -417,7 +404,7 @@ export class TransactionRepository
           .offset(params.offset)
           .limit(params.limit)) as unknown as ITransactionTable[];
       } else
-        matchedTransactions = (await this.db
+        matchedTransactions = (await db
           .select(transactionDetails)
           .from(Transactions)
           .leftJoin(Books, eq(Transactions.bookId, Books.id))
@@ -425,14 +412,20 @@ export class TransactionRepository
           .orderBy(customOrder)
           .offset(params.offset)
           .limit(params.limit)) as unknown as ITransactionTable[];
-      const [totalMatchedBooks] = await this.db
+
+      const mappedResults = matchedTransactions.map((transaction) => ({
+        ...transaction,
+        requestStatus: transaction.requestStatus ?? "cancelled",
+        bookStatus: transaction.bookStatus ?? "not issued",
+      }));
+      const [totalMatchedBooks] = await db
         .select({ count: count() })
         .from(Transactions)
         .leftJoin(Books, eq(Transactions.bookId, Books.id))
         .leftJoin(Members, eq(Transactions.memberId, Members.id))
         .where(searchWhereClause);
       return {
-        items: matchedTransactions,
+        items: mappedResults,
         pagination: {
           offset: params.offset,
           limit: params.limit,
@@ -449,7 +442,7 @@ export class TransactionRepository
   async getById(TransactionId: number): Promise<ITransaction | undefined> {
     // Execution of queries:
     try {
-      const [selectedTransaction] = await this.db
+      const [selectedTransaction] = await db
         .select()
         .from(Transactions)
         .where(eq(Transactions.id, TransactionId));
@@ -466,7 +459,7 @@ export class TransactionRepository
   async getByData(data: ITransactionBase): Promise<ITransaction | undefined> {
     // Execution of queries:
     try {
-      const [selectedTransaction] = await this.db
+      const [selectedTransaction] = await db
         .select()
         .from(Transactions)
         .where(

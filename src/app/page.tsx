@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export const RootPage = () => {
+export default function RootPage() {
   redirect("/en");
-};
+}
