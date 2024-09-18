@@ -1,17 +1,17 @@
-import { IRepository } from "../core/repository";
-import { IBook } from "../models/book.model";
-import { BookSchema, BookSchemaBase, IBookBase } from "../models/book.schema";
-import { IPageRequest, IPagedResponse } from "../core/pagination";
-import { Books, DrizzleAdapter } from "../database/drizzle/drizzleAdapter";
+import { IRepository } from "@/lib/core/repository";
+import { IBook } from "@/lib/models/book.model";
+import {
+  BookSchema,
+  BookSchemaBase,
+  IBookBase,
+} from "@/lib/models/book.schema";
+import { IPageRequest, IPagedResponse } from "@/lib/core/pagination";
 import { count, eq, like, or, SQL } from "drizzle-orm";
-import { MySql2Database } from "drizzle-orm/mysql2/driver";
+import { db } from "@/lib/database/drizzle/db";
+import { VercelPgDatabase } from "drizzle-orm/vercel-postgres";
+import { Books } from "@/lib/database/drizzle/drizzleSchema";
 
 export class BookRepository implements IRepository<IBookBase, IBook> {
-  private db: MySql2Database<Record<string, unknown>>;
-  constructor(private readonly dbManager: DrizzleAdapter) {
-    this.db = this.dbManager.getDrizzlePoolDb();
-  }
-
   async create(newBookdata: IBookBase): Promise<IBook | undefined> {
     let validatedData: Partial<IBook> = BookSchemaBase.parse(newBookdata);
     validatedData = {
@@ -21,13 +21,13 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
 
     // Execution of queries:
     try {
-      const [result] = await this.db
+      const [result] = await db
         .insert(Books)
         .values(validatedData as IBook)
-        .$returningId();
+        .returning();
       if (result.id) {
-        const createdBook = await this.getById(result.id);
-        return createdBook;
+        // const createdBook = await this.getById(result.id);
+        return result;
       } else throw new Error("There was a problem while creating the book");
     } catch (err) {
       if (err instanceof Error) throw new Error(err.message);
@@ -52,11 +52,11 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
             validatedBook.totalNumOfCopies -
             (oldBook.totalNumOfCopies - validatedBook.availableNumOfCopies),
         };
-        const [result] = await this.db
+        const result = await db
           .update(Books)
           .set(updatedBook)
           .where(eq(Books.id, bookId));
-        if (result.affectedRows > 0) {
+        if (result.rowCount && result.rowCount > 0) {
           return updatedBook;
         } else throw new Error("There was a problem while updating the book");
       }
@@ -70,10 +70,8 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
     try {
       const deletedBook = await this.getById(bookId);
       if (deletedBook) {
-        const [result] = await this.db
-          .delete(Books)
-          .where(eq(Books.id, bookId));
-        if (result.affectedRows > 0) {
+        const result = await db.delete(Books).where(eq(Books.id, bookId));
+        if (result.rowCount && result.rowCount > 0) {
           return deletedBook;
         } else throw new Error("There was a problem while deleting the book");
       }
@@ -85,7 +83,7 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
   async getById(bookId: number): Promise<IBook | undefined> {
     // Execution of queries:
     try {
-      const [selectedBook] = await this.db
+      const [selectedBook] = await db
         .select()
         .from(Books)
         .where(eq(Books.id, bookId));
@@ -113,21 +111,22 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
     // Execution of queries:
     try {
       let matchedBooks: IBook[];
-      if (searchWhereClause)
-        matchedBooks = await this.db
+      if (searchWhereClause) {
+        matchedBooks = await db
           .select()
           .from(Books)
           .where(searchWhereClause)
           .offset(params.offset)
           .limit(params.limit);
-      else
-        matchedBooks = await this.db
+      } else {
+        matchedBooks = await db
           .select()
           .from(Books)
           .offset(params.offset)
           .limit(params.limit);
+      }
       if (matchedBooks.length !== 0) {
-        const [totalMatchedBooks] = await this.db
+        const [totalMatchedBooks] = await db
           .select({ count: count() })
           .from(Books)
           .where(searchWhereClause);

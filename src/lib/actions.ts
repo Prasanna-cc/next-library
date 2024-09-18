@@ -1,26 +1,20 @@
 "use server";
 
-import { dbManager, MemberSessions } from "./database/drizzle/drizzleAdapter";
 import { IMemberBase, IMemberDetails } from "./models/member.model";
 import { comparePassword, hashPassword } from "./hashPassword";
 import { MemberRepository } from "./memberManagement/member.repository";
-import { Profile } from "next-auth";
-import { MemberSessRepository } from "./memberManagement/memberSess.repository";
-import { redirect } from "next/navigation";
+// import { MemberSessRepository } from "./memberManagement/memberSess.repository";
 import { IPageRequest, ITransactionPageRequest } from "./core/pagination";
 import { BookRepository } from "./bookManagement/book.repository";
-import {
-  ITransactionBase,
-  ITransactionTable,
-} from "./models/transaction.model";
+import { ITransactionBase } from "./models/transaction.model";
 import { TransactionRepository } from "./transactionManagement/transaction.repository";
 import { AppError } from "./core/appError";
 import { IBookBase } from "./models/book.model";
 
-const memberRepo = new MemberRepository(dbManager);
-const memberSessionRepo = new MemberSessRepository(dbManager);
-const bookRepo = new BookRepository(dbManager);
-const transactionRepo = new TransactionRepository(dbManager);
+const memberRepo = new MemberRepository();
+// const memberSessionRepo = new MemberSessRepository(dbManager);
+const bookRepo = new BookRepository();
+const transactionRepo = new TransactionRepository();
 
 export const registerMember = async (details: IMemberBase) => {
   try {
@@ -44,12 +38,12 @@ export const authenticateSignin = async (email: string, password: string) => {
   return memberFound;
 };
 
-export const storeUserSession = async (id: number, refreshToken: string) => {
-  return memberSessionRepo.create({
-    id,
-    refreshToken,
-  });
-};
+// export const storeUserSession = async (id: number, refreshToken: string) => {
+//   return memberSessionRepo.create({
+//     id,
+//     refreshToken,
+//   });
+// };
 
 export const authenticateGoogleSignin = async (
   email: string,
@@ -63,7 +57,7 @@ export const authenticateGoogleSignin = async (
       return null;
     } else {
       // Store the refresh token in database
-      const session = await storeUserSession(user.id, refreshToken);
+      // const session = await storeUserSession(user.id, refreshToken);
       return { id: user.id, role: user.role };
     }
   } catch (error) {

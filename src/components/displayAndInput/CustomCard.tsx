@@ -178,8 +178,11 @@ export const MembersCard = ({ member }: MemberCardProps) => {
               </div>
               <div className="space-y-2 text-sm">
                 {content.map((item) => (
-                  <div key={item.label} className="flex items-center gap-2">
-                    {item.icon}
+                  <div
+                    key={item.label}
+                    className="flex items-center gap-2 overflow-x-scroll no-scrollbar"
+                  >
+                    <span>{item.icon}</span>
                     <span className="font-medium">{item.label}:</span>
                     <span className="text-gray-600">{item.value}</span>
                   </div>

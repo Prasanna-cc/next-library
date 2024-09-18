@@ -1,26 +1,26 @@
-"use server";
+// "use server";
 
 // import { AppEnvs } from "../core/read-env";
-import { dbManager } from "../database/drizzle/drizzleAdapter";
-import { IMemberBase, IMemberDetails } from "../models/member.model";
-import { hashPassword, comparePassword } from "../hashPassword";
-import { MemberRepository } from "./member.repository";
+// import { dbManager } from "../database/drizzle/drizzleAdapter";
+// import { IMemberBase, IMemberDetails } from "../models/member.model";
+// import { hashPassword, comparePassword } from "../hashPassword";
+// import { MemberRepository } from "./member.repository";
 // import { MemberSessRepository } from "./memberSess.repository";
 // import { URLSearchParams } from "url";
 
-const memberRepo = new MemberRepository(dbManager);
+// const memberRepo = new MemberRepository(dbManager);
 
-export const registerMember = async (details: IMemberBase) => {
-  try {
-    const { password, ...otherDetails } = details;
-    const hashedPassword = await hashPassword(password);
-    const newUser = { password: hashedPassword, ...otherDetails };
-    const result = await memberRepo.create(newUser);
-    return "User registered successfully";
-  } catch (err) {
-    if (err instanceof Error) throw err;
-  }
-};
+// export const registerMember = async (details: IMemberBase) => {
+//   try {
+//     const { password, ...otherDetails } = details;
+//     const hashedPassword = await hashPassword(password);
+//     const newUser = { password: hashedPassword, ...otherDetails };
+//     const result = await memberRepo.create(newUser);
+//     return "User registered successfully";
+//   } catch (err) {
+//     if (err instanceof Error) throw err;
+//   }
+// };
 
 // const JWTLoginAuth = async (
 //   req: CustomRequest,
