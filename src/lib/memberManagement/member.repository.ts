@@ -5,7 +5,7 @@ import { IPagedResponse, IPageRequest } from "../core/pagination";
 import { count, eq, like, or, SQL } from "drizzle-orm";
 import { VercelPgDatabase } from "drizzle-orm/vercel-postgres";
 import { db } from "../database/drizzle/db";
-import { Members } from "@/lib/database/drizzle/drizzleSchema";
+import { Members } from "../database/drizzle/drizzleSchemaMySql";
 // import { AppError } from "../networking/libs/appError.utils";
 
 export class MemberRepository
@@ -19,10 +19,10 @@ export class MemberRepository
       const [result] = await db
         .insert(Members)
         .values(validatedData as IMember)
-        .returning();
+        .$returningId();
       if (result.id) {
-        // const createdMember = await this.getById(result.id);
-        return result;
+        const createdMember = await this.getById(result.id);
+        return createdMember;
       } else throw new Error("There was a problem while creating the member");
     } catch (err) {
       if (err instanceof Error) throw new Error(err.message);
@@ -42,11 +42,11 @@ export class MemberRepository
           ...data,
         };
         const validatedMember = MemberBaseSchema.parse(updatedMember);
-        const result = await db
+        const [result] = await db
           .update(Members)
           .set(validatedMember)
           .where(eq(Members.id, MemberId));
-        if (result.rowCount && result.rowCount > 0) {
+        if (result.affectedRows && result.affectedRows > 0) {
           //TODO: remove password.
           return updatedMember;
         } else throw new Error("There was a problem while updating the member");
@@ -61,8 +61,10 @@ export class MemberRepository
     try {
       const deletedMember = await this.getById(memberId);
       if (deletedMember) {
-        const result = await db.delete(Members).where(eq(Members.id, memberId));
-        if (result.rowCount && result.rowCount > 0) {
+        const [result] = await db
+          .delete(Members)
+          .where(eq(Members.id, memberId));
+        if (result.affectedRows && result.affectedRows > 0) {
           return deletedMember;
         } else throw new Error("There was a problem while deleting the member");
       }

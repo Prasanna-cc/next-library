@@ -8,7 +8,7 @@ import {
 import { IPageRequest, IPagedResponse } from "@/lib/core/pagination";
 import { count, eq, like, or, SQL } from "drizzle-orm";
 import { db } from "@/lib/database/drizzle/db";
-import { Books } from "@/lib/database/drizzle/drizzleSchema";
+import { Books } from "../database/drizzle/drizzleSchemaMySql";
 
 export class BookRepository implements IRepository<IBookBase, IBook> {
   async create(newBookdata: IBookBase): Promise<IBook | undefined> {
@@ -23,10 +23,10 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
       const [result] = await db
         .insert(Books)
         .values(validatedData as IBook)
-        .returning();
+        .$returningId();
       if (result.id) {
-        // const createdBook = await this.getById(result.id);
-        return result;
+        const createdBook = await this.getById(result.id);
+        return createdBook;
       } else throw new Error("There was a problem while creating the book");
     } catch (err) {
       if (err instanceof Error) throw new Error(err.message);
@@ -52,11 +52,11 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
             validatedBook.totalNumOfCopies -
             (oldBook.totalNumOfCopies - validatedBook.availableNumOfCopies),
         };
-        const result = await db
+        const [result] = await db
           .update(Books)
           .set(updatedBook)
           .where(eq(Books.id, bookId));
-        if (result.rowCount && result.rowCount > 0) {
+        if (result.affectedRows && result.affectedRows > 0) {
           return updatedBook;
         } else throw new Error("There was a problem while updating the book");
       }
@@ -70,8 +70,8 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
     try {
       const deletedBook = await this.getById(bookId);
       if (deletedBook) {
-        const result = await db.delete(Books).where(eq(Books.id, bookId));
-        if (result.rowCount && result.rowCount > 0) {
+        const [result] = await db.delete(Books).where(eq(Books.id, bookId));
+        if (result.affectedRows && result.affectedRows > 0) {
           return deletedBook;
         } else throw new Error("There was a problem while deleting the book");
       }

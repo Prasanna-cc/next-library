@@ -14,9 +14,9 @@ import { VercelPgDatabase } from "drizzle-orm/vercel-postgres";
 import { db } from "../database/drizzle/db";
 import {
   Books,
-  Transactions,
   Members,
-} from "@/lib/database/drizzle/drizzleSchema";
+  Transactions,
+} from "../database/drizzle/drizzleSchemaMySql";
 
 export class TransactionRepository
   implements
@@ -52,7 +52,7 @@ export class TransactionRepository
           const [result] = await trxn
             .insert(Transactions)
             .values(newTransaction)
-            .returning();
+            .$returningId();
           return result.id;
         });
         const issuedTransaction = (await this.getById(createdTrxnId))!;
@@ -151,11 +151,11 @@ export class TransactionRepository
             .set(updatedBook)
             .where(eq(Books.id, updatedBook.id));
 
-          const result = await trxn
+          const [result] = await trxn
             .update(Transactions)
             .set(transaction)
             .where(eq(Transactions.id, transaction.id));
-          return result.rowCount;
+          return result.affectedRows;
         });
         if (updated) {
           return transaction;
@@ -199,11 +199,11 @@ export class TransactionRepository
             .set(updatedBook)
             .where(eq(Books.id, updatedBook.id));
 
-          const result = await trxn
+          const [result] = await trxn
             .update(Transactions)
             .set(transaction)
             .where(eq(Transactions.id, transaction.id));
-          return result.rowCount;
+          return result.affectedRows;
         });
         if (updated) {
           return transaction;
@@ -246,11 +246,11 @@ export class TransactionRepository
             .set(updatedBook)
             .where(eq(Books.id, updatedBook.id));
 
-          const result = await trxn
+          const [result] = await trxn
             .update(Transactions)
             .set(transaction)
             .where(eq(Transactions.id, transaction.id));
-          return result.rowCount;
+          return result.affectedRows;
         });
         if (updated) {
           return transaction;
