@@ -13,6 +13,7 @@ import {
 import { NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { LocaleSelector } from "@/components/LocaleSelecter";
+import { EdgeStoreProvider } from "@/lib/edgestore";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -55,7 +56,9 @@ export default async function RootLayout({
               <LocaleSelector />
               <MainNavMenu />
             </Navbar>
-            <main>{children}</main>
+            <EdgeStoreProvider>
+              <main>{children}</main>
+            </EdgeStoreProvider>
             <Toaster />
           </NextIntlClientProvider>
         </body>

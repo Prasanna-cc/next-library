@@ -33,6 +33,10 @@ export const BookSchemaBase = z.object({
     .number({ message: "Price must be a number." })
     .int({ message: "Price cannot be a decimal number." })
     .positive("Price must be a positive integer"),
+  imageUrl: z
+    .string({ message: "image url must be a string." })
+    .nullable()
+    .optional(),
 });
 
 export const BookSchema = BookSchemaBase.extend({

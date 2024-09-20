@@ -8,7 +8,6 @@ import {
 import { IPageRequest, IPagedResponse } from "@/lib/core/pagination";
 import { count, eq, like, or, SQL } from "drizzle-orm";
 import { db } from "@/lib/database/drizzle/db";
-import { VercelPgDatabase } from "drizzle-orm/vercel-postgres";
 import { Books } from "@/lib/database/drizzle/drizzleSchema";
 
 export class BookRepository implements IRepository<IBookBase, IBook> {
@@ -48,6 +47,7 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
         const validatedBook = BookSchema.parse(newBook);
         const updatedBook: IBook = {
           ...validatedBook,
+          imageUrl: validatedBook.imageUrl ?? null,
           availableNumOfCopies:
             validatedBook.totalNumOfCopies -
             (oldBook.totalNumOfCopies - validatedBook.availableNumOfCopies),
@@ -130,6 +130,7 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
           .select({ count: count() })
           .from(Books)
           .where(searchWhereClause);
+
         return {
           items: matchedBooks,
           pagination: {

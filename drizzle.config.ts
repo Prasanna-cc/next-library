@@ -1,9 +1,9 @@
-// import { defineConfig } from "drizzle-kit";
-// import { AppEnvs } from "./src/lib/core/read-env";
+import { defineConfig } from "drizzle-kit";
+import { AppEnvs } from "./src/lib/core/read-env";
 
 // export default defineConfig({
-//   schema: "./src/app/database/drizzle/drizzleSchema.ts",
-//   out: "./src/app/database/drizzle/migration",
+//   schema: "./src/lib/database/drizzle/drizzleSchemaMySql.ts",
+//   out: "./src/lib/database/drizzle/localMigration",
 //   dialect: "mysql",
 //   dbCredentials: {
 //     url: AppEnvs.DATABASE_URL,
@@ -13,12 +13,11 @@
 // });
 
 import "@/lib/database/drizzle/envConfig";
-import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
   schema: "./src/lib/database/drizzle/drizzleSchema.ts",
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.POSTGRES_URL!,
+    url: AppEnvs.POSTGRES_URL!,
   },
 });
