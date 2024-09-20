@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1726815232931,
+      "tag": "0000_wise_sandman",
+      "breakpoints": true
+    }
+  ]
+}

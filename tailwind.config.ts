@@ -18,6 +18,11 @@ const config: Config = {
       },
     },
     extend: {
+      variants: {
+        extend: {
+          opacity: ["group-hover"],
+        },
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
