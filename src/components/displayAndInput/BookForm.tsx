@@ -145,6 +145,8 @@ const BookForm = ({ book, handleBack }: BookFormProps) => {
           title: "Book added successfully",
         });
         handleBack?.();
+        form.reset();
+        setImageUrl(null);
       }
     } catch (err) {
       toast({
@@ -185,7 +187,7 @@ const BookForm = ({ book, handleBack }: BookFormProps) => {
     }
   };
 
-  const isSubmitDisabled = isUploading || (!isImageUploaded && !book?.imageUrl);
+  const isSubmitDisabled = isUploading;
 
   return (
     <Form {...form}>
@@ -240,10 +242,11 @@ const BookForm = ({ book, handleBack }: BookFormProps) => {
                   {imageUrl ? (
                     <div className="flex flex-col items-center">
                       <Image
-                        layout="fill"
+                        width={1000}
+                        height={1000}
                         src={imageUrl}
                         alt="Book cover"
-                        className="max-h-40 mb-2"
+                        className=" mb-2"
                       />
                       <p>
                         Drag & drop to replace or click to select a new image
@@ -281,7 +284,10 @@ const BookForm = ({ book, handleBack }: BookFormProps) => {
             <Button type="submit" disabled={isSubmitDisabled}>
               Save
             </Button>
-            <DeleteConfirmationDialog onConfirm={() => onDeleteBook(book.id)} />
+            {/* <DeleteConfirmationDialog
+              disabled={book.availableNumOfCopies !== book.totalNumOfCopies}
+              onConfirm={() => onDeleteBook(book.id)}
+            /> */}
           </div>
         ) : (
           <Button

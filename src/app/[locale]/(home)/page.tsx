@@ -37,25 +37,23 @@ export default async function BooksPage({
         <span className="text-slate-500 text-sm">{t("description")}</span>
       </div>
       <hr />
-      <div>
-        <ToolBar
-          firstHalf={<SearchComponent placeholder={t("searchPlaceholder")} />}
-          secondHalf={
-            <PaginationComponent currentPage={page} totalPages={totalPages} />
-          }
-          responsive
-        />
-        <div className="w-full grid py-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {books.length === 0 ? (
-            <p>No books found.</p>
-          ) : (
-            books.map((book) => (
-              <div key={book.id} className="flex justify-center">
-                <BookCard book={book} />
-              </div>
-            ))
-          )}
-        </div>
+      <ToolBar
+        firstHalf={<SearchComponent placeholder={t("searchPlaceholder")} />}
+        secondHalf={
+          <PaginationComponent currentPage={page} totalPages={totalPages} />
+        }
+        responsive
+      />
+      <div className="w-full grid pb-3 grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {books.length === 0 ? (
+          <p>No books found.</p>
+        ) : (
+          books.map((book) => (
+            <div key={book.id} className="flex justify-center">
+              <BookCard book={book} />
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

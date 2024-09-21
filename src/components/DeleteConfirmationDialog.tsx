@@ -11,21 +11,24 @@ import {
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Trash2 } from "lucide-react";
+import React from "react";
 
-type DeleteConfirmationDialogProps = {
+interface DeleteConfirmationDialogProps
+  extends React.ComponentPropsWithoutRef<"button"> {
   onlyIcon?: boolean;
   onConfirm: () => void;
-};
+}
 
 const DeleteConfirmationDialog = ({
   onlyIcon = false,
   onConfirm,
+  ...delegated
 }: DeleteConfirmationDialogProps) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
         {onlyIcon ? (
-          <Button variant="destructive" className="">
+          <Button variant="destructive" {...delegated}>
             <Trash2 className=" h-4 w-4" />
           </Button>
         ) : (

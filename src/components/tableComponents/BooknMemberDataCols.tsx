@@ -67,12 +67,13 @@ export const booksColumns: ColumnDef<Partial<IBook>>[] = [
     header: translatedHeader(),
     cell: ({ row }) => {
       return (
-        <div className="flex gap-2">
-          <DeleteConfirmationDialog
-            onlyIcon
-            onConfirm={() => onDeleteBook(row.original.id!)}
-          />
-        </div>
+        <DeleteConfirmationDialog
+          onlyIcon
+          disabled={
+            row.original.availableNumOfCopies !== row.original.totalNumOfCopies
+          }
+          onConfirm={() => onDeleteBook(row.original.id!)}
+        />
       );
     },
   },

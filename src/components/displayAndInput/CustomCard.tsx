@@ -67,15 +67,24 @@ export const BooksCard = ({ book }: BookCardProps) => {
       ) : (
         <>
           <div className="w-full flex flex-col justify-between items-center">
-            <CardHeader className="w-full bg-slate-200">
+            <CardHeader className="w-full bg-slate-200 py-2">
               <div className="relative w-full flex justify-center">
-                {/* <Image
-                src={`https://picsum.photos/seed/${book.id}/400/300`}
-                alt={book.title}
-                layout="fill"
-                objectFit="cover"
-              /> */}
-                <Book className="w-40 h-40" />
+                {book.imageUrl ? (
+                  <Image
+                    src={book.imageUrl}
+                    alt="Book image"
+                    layout="responsive"
+                    width={100}
+                    height={100}
+                    className="max-w-40 max-h-48"
+                    placeholder="blur"
+                    blurDataURL={book.imageUrl}
+                  />
+                ) : (
+                  <div className="flex items-center justify-center w-full h-full">
+                    <Book className="w-40 h-40" />
+                  </div>
+                )}
               </div>
             </CardHeader>
             <CardContent className="pt-4 w-full">
