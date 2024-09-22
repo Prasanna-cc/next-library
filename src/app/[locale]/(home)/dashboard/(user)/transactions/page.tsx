@@ -12,7 +12,11 @@ import { BookStatus, RequestStatus } from "@/lib/core/types";
 import FilterComponent from "@/components/TransactionFilters";
 import OnlyRequestSwitch from "@/components/onlyRequestSwitch";
 import Search from "@/components/Search";
-import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
+import {
+  getLocale,
+  getTranslations,
+  unstable_setRequestLocale,
+} from "next-intl/server";
 
 async function MyTransactionsPage({
   searchParams,
@@ -28,7 +32,7 @@ async function MyTransactionsPage({
 }) {
   unstable_setRequestLocale(locale);
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/signin");
+  if (!session) redirect(`/${locale}/signin`);
 
   const ITEMS_PER_PAGE = 9;
   const page = searchParams?.page ? parseInt(searchParams.page, 10) : 1;

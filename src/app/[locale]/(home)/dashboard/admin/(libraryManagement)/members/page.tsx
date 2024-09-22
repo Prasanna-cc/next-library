@@ -6,16 +6,19 @@ import { Plus } from "lucide-react";
 import MemberForm from "@/components/displayAndInput/MemberForm";
 import Search from "@/components/Search";
 import ToolBar from "@/app/[locale]/(home)/ToolBar";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
 export default async function MemberManagementPage({
   searchParams,
+  params: { locale },
 }: {
   searchParams?: {
     query?: string;
     page?: string;
   };
+  params: { locale: string };
 }) {
+  unstable_setRequestLocale(locale);
   const ITEMS_PER_PAGE = 9;
   const page = searchParams?.page ? parseInt(searchParams.page, 10) : 1;
   const query = searchParams?.query || "";

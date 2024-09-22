@@ -12,10 +12,11 @@ import Search from "@/components/Search";
 import FilterComponent from "@/components/TransactionFilters";
 import { BookStatus, RequestStatus } from "@/lib/core/types";
 import OnlyRequestSwitch from "@/components/onlyRequestSwitch";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
 async function AllTransactionsPage({
   searchParams,
+  params: { locale },
 }: {
   searchParams?: {
     query?: string;
@@ -23,9 +24,11 @@ async function AllTransactionsPage({
     filter?: BookStatus | RequestStatus;
     onlyUnclaimed?: "true" | undefined;
   };
+  params: { locale: string };
 }) {
+  unstable_setRequestLocale(locale);
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/signin");
+  if (!session) redirect(`/${locale}/signin`);
 
   const ITEMS_PER_PAGE = 9;
   const page = searchParams?.page ? parseInt(searchParams.page, 10) : 1;
