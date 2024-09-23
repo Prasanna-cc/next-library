@@ -40,7 +40,7 @@ export default function ShowDueListSwitch() {
         onCheckedChange={handleSwitch}
       />
       <Label htmlFor="due-unclaimed-mode" className="text-sm text-slate-500">
-        Show Due List
+        {t("ShowDueList")}
       </Label>
     </div>
   );

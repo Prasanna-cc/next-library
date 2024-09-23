@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Image from "next/image";
 import { IMember } from "@/lib/models/member.model";
 import {
@@ -21,10 +21,14 @@ import {
   Phone,
   MapPin,
   Calendar,
+  ReceiptTextIcon,
+  Tag,
 } from "lucide-react";
 import BookForm from "./BookForm";
 import MemberForm from "./MemberForm";
 import { IBook } from "@/lib/models/book.schema";
+import PriceTag from "@/components/PriceTag";
+import PriceSkeleton from "@/components/skeletons/PriceSkeleton";
 
 type BookCardProps = {
   book: IBook;
@@ -71,6 +75,15 @@ export const BooksCard = ({ book: initialBook }: BookCardProps) => {
       label: "Available",
       icon: <BookCheck className="w-4 h-4" />,
       value: book.availableNumOfCopies,
+    },
+    {
+      label: "Price",
+      icon: <Tag className="w-4 h-4" />,
+      value: (
+        <Suspense fallback={<PriceSkeleton />}>
+          <PriceTag price={book.price} />
+        </Suspense>
+      ),
     },
   ];
 

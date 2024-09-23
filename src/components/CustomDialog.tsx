@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,9 +12,11 @@ import {
 import { Button } from "@/components/ui/button";
 
 interface CustomDialogProps {
-  triggerText: string | React.ReactNode;
+  triggerText?: string | React.ReactNode;
   title?: string;
   description?: string;
+  openOnLoad?: boolean;
+  onOpenChange?: (open: boolean) => void;
   children: React.ReactNode;
   triggerButtonClass?: string;
   triggerButtonVariant?:
@@ -29,16 +33,23 @@ const CustomDialog: React.FC<CustomDialogProps> = ({
   title,
   description,
   children,
+  openOnLoad,
+  onOpenChange,
   triggerButtonClass,
   triggerButtonVariant = "default",
 }) => {
+  // const [isOpen, setIsOpen] = useState(openOnLoad ?? false);
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant={triggerButtonVariant} className={triggerButtonClass}>
-          {triggerText}
-        </Button>
-      </DialogTrigger>
+    <Dialog open={openOnLoad} onOpenChange={onOpenChange}>
+      {openOnLoad ? (
+        ""
+      ) : (
+        <DialogTrigger asChild>
+          <Button variant={triggerButtonVariant} className={triggerButtonClass}>
+            {triggerText}
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="max-h-96 overflow-auto no-scrollbar max-w-[425px]">
         {(title || description) && (
           <DialogHeader>

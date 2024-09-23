@@ -7,6 +7,7 @@ import { VercelPgDatabase } from "drizzle-orm/vercel-postgres";
 import { db } from "../database/drizzle/db";
 import { Members } from "../database/drizzle/drizzleSchemaMySql";
 import { AppError } from "../core/appError";
+import { hashPassword } from "../hashPassword";
 // import { AppError } from "../networking/libs/appError.utils";
 
 export class MemberRepository
@@ -14,13 +15,12 @@ export class MemberRepository
 {
   async create(data: IMemberBase): Promise<IMemberDetails | undefined> {
     const validatedData = MemberBaseSchema.parse(data);
-
+    const { password, ...otherDetails } = validatedData;
+    const hashedPassword = await hashPassword(password);
+    const newUser = { ...otherDetails, password: hashedPassword };
     // Execution of queries:
     try {
-      const [result] = await db
-        .insert(Members)
-        .values(validatedData as IMember)
-        .$returningId();
+      const [result] = await db.insert(Members).values(newUser).$returningId();
       if (result.id) {
         const createdMember = await this.getById(result.id);
         return createdMember;
@@ -45,12 +45,16 @@ export class MemberRepository
   ): Promise<IMemberDetails | undefined> {
     // Execution of queries:
     try {
-      let oldMember = await this.getById(MemberId);
+      let oldMember = await this.getAllData(MemberId);
       if (oldMember) {
         const updatedMember = {
           ...oldMember,
           ...data,
         };
+        console.log("data: ", data);
+        console.log("oldMember: ", oldMember);
+        console.log("updatedMember: ", updatedMember);
+
         const validatedMember = MemberBaseSchema.parse(updatedMember);
         const [result] = await db
           .update(Members)

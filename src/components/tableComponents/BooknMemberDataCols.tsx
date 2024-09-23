@@ -10,7 +10,7 @@ import { onDeleteBook } from "@/components/librarySpecificComponents/adminCompon
 import { onDeleteMember } from "@/components/librarySpecificComponents/adminComponents/MemberForm";
 import { selectColumn } from "./SelectColumn";
 import { sortableColumnHeader } from "./SortableColumnHeader";
-import { translatedHeader } from "./RowActions";
+import { translatedHeader, TranslatedLabel } from "./RowActions";
 
 export const booksColumns: ColumnDef<Partial<IBook>>[] = [
   ...selectColumn<Partial<IBook>>(),
@@ -91,7 +91,12 @@ export const memberColumns: ColumnDef<Partial<IMember>>[] = [
         <Badge
           variant={role === "admin" ? "default" : "outline"} // 'default' for admin, 'outline' for user
         >
-          {role}
+          {role && (
+            <TranslatedLabel
+              nameSpace="Tables.MembersTable.Role"
+              value={role}
+            />
+          )}
         </Badge>
       );
     },

@@ -14,6 +14,10 @@ import { NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { LocaleSelector } from "@/components/LocaleSelecter";
 import { EdgeStoreProvider } from "@/lib/edgestore";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
+import { findMember } from "@/lib/actions";
+import { IMember } from "@/lib/models/member.model";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -47,6 +51,9 @@ export default async function RootLayout({
 }) {
   unstable_setRequestLocale(locale);
   const messages = await getMessages();
+  const session = await getServerSession(authOptions);
+  let userDetails: IMember | undefined | null;
+  if (session) userDetails = await findMember(session.user.id);
   return (
     <AuthProvider>
       <html lang={locale}>
@@ -54,7 +61,7 @@ export default async function RootLayout({
           <NextIntlClientProvider messages={messages}>
             <Navbar>
               <LocaleSelector />
-              <MainNavMenu />
+              <MainNavMenu userDetails={userDetails} />
             </Navbar>
             <EdgeStoreProvider>
               <main>{children}</main>

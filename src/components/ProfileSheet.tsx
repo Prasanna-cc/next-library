@@ -25,10 +25,18 @@ import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { toast } from "@/hooks/use-toast";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/routing";
+import { Link, redirect } from "@/i18n/routing";
+import MemberEditForm from "./librarySpecificComponents/adminComponents/MemberEditForm";
+import { UserEdit } from "./librarySpecificComponents/UserDetails";
+import { IMember } from "@/lib/models/member.model";
 
-export const ProfileSheet = () => {
+interface ProfileSheetProps {
+  userDetails: IMember | undefined | null;
+}
+
+export const ProfileSheet = ({ userDetails }: ProfileSheetProps) => {
   const { data: session } = useSession();
+  if (!session || session === null) redirect(`/signin`);
   const [isEditing, setIsEditing] = useState(false);
   const handleBack = () => setIsEditing(false);
   const t = useTranslations("Profile");
@@ -67,7 +75,7 @@ export const ProfileSheet = () => {
             {/* Profile Section */}
             {!isEditing ? (
               <div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center space-x-4">
                     {session?.user?.image ? (
                       <Image
@@ -87,12 +95,47 @@ export const ProfileSheet = () => {
                       </p>
                     </div>
                   </div>
-                  {/* <Button variant="ghost" onClick={() => setIsEditing(true)}>
+                  <Button variant="ghost" onClick={() => setIsEditing(true)}>
                     <Edit className="h-4 w-4" />
-                  </Button> */}
+                  </Button>
                 </div>
 
                 <hr className="my-4" />
+
+                {session?.user.role === "admin" ? (
+                  <div>
+                    <div>
+                      <div className="pb-3 flex justify-between items-center">
+                        <h4 className="font-semibold">{"All Requests"}</h4>
+                        <SheetClose asChild>
+                          <Link href="/dashboard/admin/allTransactions?filter=requested">
+                            <Button variant="ghost">
+                              <ArrowRight className="h-5 w-5" />
+                            </Button>
+                          </Link>
+                        </SheetClose>
+                      </div>
+                    </div>
+
+                    <hr className="my-4" />
+                    <div>
+                      <div className="pb-3 flex justify-between items-center">
+                        <h4 className="font-semibold">{"All Dues"}</h4>
+                        <SheetClose asChild>
+                          <Link href="/dashboard/admin/allTransactions?showDueList=true">
+                            <Button variant="ghost">
+                              <ArrowRight className="h-5 w-5" />
+                            </Button>
+                          </Link>
+                        </SheetClose>
+                      </div>
+                    </div>
+
+                    <hr className="my-4" />
+                  </div>
+                ) : (
+                  ""
+                )}
 
                 {/* My Requests Section */}
                 <div>
@@ -146,55 +189,15 @@ export const ProfileSheet = () => {
               <div>
                 <div className="pb-3 flex justify-between items-center">
                   <h4 className="font-semibold">Edit Profile</h4>
-                  <Button variant="ghost" onClick={handleBack}>
+                  {/* <Button variant="ghost" onClick={handleBack}>
                     <ArrowLeft className="h-5 w-5" />
-                  </Button>
+                  </Button> */}
                 </div>
-                <Tabs defaultValue="account-info">
-                  <TabsList>
-                    <TabsTrigger value="account-info">Account Info</TabsTrigger>
-                    <TabsTrigger value="password">Password</TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="account-info">
-                    <form className="space-y-4">
-                      <Input
-                        name="name"
-                        placeholder="Name"
-                        defaultValue={session?.user?.name || ""}
-                      />
-                      <Input
-                        name="email"
-                        placeholder="Email"
-                        defaultValue={session?.user?.email || ""}
-                      />
-                      <Input name="age" placeholder="Age" />
-                      <Input name="address" placeholder="Address" />
-                      <Input name="phone" placeholder="Phone Number" />
-                      <Button type="submit">Save Changes</Button>
-                    </form>
-                  </TabsContent>
-                  <TabsContent value="password">
-                    <form className="space-y-4">
-                      <Input
-                        name="current-password"
-                        type="password"
-                        placeholder="Current Password"
-                      />
-                      <Input
-                        name="new-password"
-                        type="password"
-                        placeholder="New Password"
-                      />
-                      <Input
-                        name="confirm-password"
-                        type="password"
-                        placeholder="Confirm Password"
-                      />
-                      <Button type="submit">Change Password</Button>
-                    </form>
-                  </TabsContent>
-                </Tabs>
+                <MemberEditForm
+                  member={userDetails}
+                  handleBack={handleBack}
+                  forProfile
+                />
               </div>
             )}
           </div>

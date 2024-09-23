@@ -63,7 +63,7 @@ const BookDrawer = ({
           });
         }
       } catch (error) {
-        if (error instanceof AppError) {
+        if (error instanceof Error && error.message.includes("not available")) {
           toast({
             variant: "destructive",
             title: "Request Failed",

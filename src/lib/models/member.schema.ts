@@ -41,5 +41,24 @@ export const MemberSchema = MemberBaseSchema.extend({
     .optional(),
 });
 
+export const PasswordChangeSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z
+      .string()
+      .min(8, "New password should be at least 8 characters long")
+      .regex(/[A-Z]/, "New password should contain a capital letter")
+      .regex(
+        /[!@#$%^&*(),.?":{}|<>]/,
+        "New password should contain a special character"
+      ),
+    confirmPassword: z.string().min(1, "Please confirm your new password"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
 export type IMemberBase = z.input<typeof MemberBaseSchema>;
 export type IMember = z.input<typeof MemberSchema>;
+export type IPasswordChange = z.input<typeof PasswordChangeSchema>;

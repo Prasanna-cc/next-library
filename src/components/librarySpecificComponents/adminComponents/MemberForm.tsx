@@ -18,6 +18,7 @@ import { IMember, IMemberBase } from "@/lib/models/member.model";
 import { MemberSchema } from "@/lib/models/member.schema";
 import { X } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import MemberEditForm from "./MemberEditForm";
 
 export const onSubmitUpdate = async (data: IMember) => {
   try {
@@ -62,8 +63,7 @@ type MemberFormProps = {
 };
 
 const MemberForm = ({ member, handleBack }: MemberFormProps) => {
-  const isEditMode = !!member; // Check if we're editing an existing member
-
+  if (member) return <MemberEditForm member={member} handleBack={handleBack} />;
   const form = useForm<IMember>({
     resolver: zodResolver(MemberSchema),
     defaultValues: member || {
@@ -84,10 +84,8 @@ const MemberForm = ({ member, handleBack }: MemberFormProps) => {
     { label: "Email", name: "email", type: "text" },
     { label: "Phone", name: "phoneNumber", type: "text" },
     { label: "Address", name: "address", type: "text" },
+    { label: "Password", name: "password", type: "text" },
   ];
-
-  if (!member)
-    formFields.push({ label: "Password", name: "password", type: "text" });
 
   const onSubmitCreate = async (data: IMemberBase) => {
     try {
@@ -108,40 +106,38 @@ const MemberForm = ({ member, handleBack }: MemberFormProps) => {
     }
   };
 
-  const onSubmitUpdate = async (data: IMember) => {
-    try {
-      const response = await updateMember(data.id, data);
-      if (response) {
-        toast({
-          variant: "default",
-          title: "Changes updated successfully",
-        });
-        handleBack?.();
-      }
-    } catch (err) {
-      toast({
-        variant: "destructive",
-        title: "Could not update the changes",
-        description: "Please try again.",
-      });
-    }
-  };
+  // const onSubmitUpdate = async (data: IMember) => {
+  //   try {
+  //     const response = await updateMember(data.id, data);
+  //     if (response) {
+  //       toast({
+  //         variant: "default",
+  //         title: "Changes updated successfully",
+  //       });
+  //       handleBack?.();
+  //     }
+  //   } catch (err) {
+  //     toast({
+  //       variant: "destructive",
+  //       title: "Could not update the changes",
+  //       description: "Please try again.",
+  //     });
+  //   }
+  // };
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(member ? onSubmitUpdate : onSubmitCreate)}
+        onSubmit={form.handleSubmit(onSubmitCreate)}
         className="w-full h-full"
       >
         <div className="pb-2 flex justify-between items-center">
-          <h3 className="text-lg font-bold">
-            {isEditMode ? "Edit Member" : "Add Member"}
-          </h3>
-          {isEditMode && (
+          <h3 className="text-lg font-bold">Add Member</h3>
+          {/*{isEditMode && (
             <Button variant="ghost" onClick={handleBack}>
               <X className="w-4 h-4" />
             </Button>
-          )}
+          )}*/}
         </div>
         <div className="w-full flex flex-col gap-1">
           {formFields.map((field) => (
@@ -183,18 +179,18 @@ const MemberForm = ({ member, handleBack }: MemberFormProps) => {
             </FormControl>
           </FormItem>
         </div>
-        {isEditMode ? (
+        {/* {isEditMode ? (
           <div className="pt-2 flex justify-end gap-2">
             <Button type="submit">Save</Button>
             <DeleteConfirmationDialog
               onConfirm={() => onDeleteMember(member!.id)}
             />
           </div>
-        ) : (
-          <Button type="submit" className="mt-2 w-full">
-            Add
-          </Button>
-        )}
+        ) : ( */}
+        <Button type="submit" className="mt-2 w-full">
+          Add
+        </Button>
+        {/* )} */}
       </form>
     </Form>
   );

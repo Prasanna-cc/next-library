@@ -16,12 +16,15 @@
     "Profile": {
         "title": "Profile",
         "requests": "My Requests",
-        "due": "Due List"
+        "due": "My Dues"
     },
     "BooksBrowsePage": {
         "title": "Book Shelf",
         "description": "Browse through our extensive collection of books available in the library. View detailed information on each book and request to borrow them easily.",
-        "searchPlaceholder": "Search Books..."
+        "searchPlaceholder": "Search Books...",
+        "borrowButton": "Borrow",
+        "notAvailable": "Not Available",
+        "onlyFewLeft": "Only few left!"
     },
     "BooksPage": {
         "title": "Book Management",
@@ -40,6 +43,7 @@
         "description": "See all your pending book requests in one place. Cancel requests that are not approved yet. Easily filter by current status of your request to find what you are looking for.",
         "filterPlaceholder": "Filter by Status",
         "onlyRequestSwitch": "Show only requests",
+        "ShowDueList": "Show Due List",
         "searchPlaceholder": "Search transactions..."
     },
     "AllTransactionsPage": {
@@ -48,6 +52,31 @@
         "searchPlaceholder": "Search transactions..."
     },
     "Tables": {
+        "Pagination": "Page {current} of {total}",
+        "Columns": "columns",
+        "Headers": {
+            "bookTitle": "Book Title",
+            "memberName": "User Name",
+            "requestStatus": "Request Status",
+            "bookStatus": "Book Status",
+            "dueDate": "Due Date",
+            "dateOfIssue": "Date Of Issue",
+            "actions": "Actions",
+            "title": "Book Title",
+            "available": "Available",
+            "author": "Author",
+            "publisher": "Publisher",
+            "genre": "Genre",
+            "isbnNo": "ISBN",
+            "pages": "Pages",
+            "total": "Total Copies",
+            "name": "User Name",
+            "role": "Role",
+            "age": "Age",
+            "email": "Email",
+            "phone": "Phone",
+            "address": "Address"
+        },
         "TransactionTable": {
             "Headers": {
                 "bookTitle": "Book Title",
@@ -96,7 +125,11 @@
             "email": "Email",
             "phone": "Phone",
             "address": "Address",
-            "actions": "Actions"
+            "actions": "Actions",
+            "Role": {
+                "admin": "admin",
+                "user": "user"
+            }
         }
     }
 }

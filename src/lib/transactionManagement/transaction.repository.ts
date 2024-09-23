@@ -454,9 +454,8 @@ export class TransactionRepository
     const twoDaysAfterToday = new Date(today);
     twoDaysAfterToday.setDate(today.getDate() + 2);
 
-    // Format dates to match the database format (e.g., 'YYYY-MM-DD')
-    const todayFormatted = format(today, "EEE MMM dd yyyy");
-    const twoDaysAfterFormatted = format(twoDaysAfterToday, "EEE MMM dd yyyy");
+    // const todayFormatted = format(today, "EEE MMM dd yyyy");
+    // const twoDaysAfterFormatted = format(twoDaysAfterToday, "EEE MMM dd yyyy");
 
     let searchWhereClause: SQL | undefined = not(
       eq(Transactions.bookStatus, "returned")

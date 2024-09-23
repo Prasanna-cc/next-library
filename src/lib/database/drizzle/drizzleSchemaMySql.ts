@@ -38,12 +38,14 @@ export const Members = mysqlTable("Members", {
     .default("verified"),
 });
 
-// export const MemberSessions = mysqlTable("MemberSessions", {
-//   id: int("id")
-//     .notNull()
-//     .references(() => Members.id),
-//   refreshToken: varchar("refreshToken", { length: 255 }).notNull().unique(),
-// });
+export const Professors = mysqlTable("Professors", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).unique().notNull(),
+  department: varchar("department", { length: 255 }).notNull(),
+  shortBio: varchar("shortBio", { length: 255 }),
+  eventLink: varchar("eventLink", { length: 255 }),
+});
 
 export const Transactions = mysqlTable("Transactions", {
   id: serial("id").primaryKey(),

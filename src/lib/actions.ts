@@ -16,11 +16,11 @@ const memberRepo = new MemberRepository();
 const bookRepo = new BookRepository();
 const transactionRepo = new TransactionRepository();
 
-export const registerMember = async (details: IMemberBase) => {
+export const registerMember = async (newUser: IMemberBase) => {
   try {
-    const { password, ...otherDetails } = details;
-    const hashedPassword = await hashPassword(password);
-    const newUser = { password: hashedPassword, ...otherDetails };
+    // const { password, ...otherDetails } = details;
+    // const hashedPassword = await hashPassword(password);
+    // const newUser = { ...otherDetails, password: hashedPassword };
     const result = await memberRepo.create(newUser);
     return "User registered successfully";
   } catch (err) {
@@ -115,7 +115,8 @@ export const deleteBook = async (bookId: number) => {
 
 /** Member Actions **/
 
-export const findMember = (email: string) => memberRepo.getAllData(email);
+export const findMember = (emailOrId: string | number) =>
+  memberRepo.getAllData(emailOrId);
 
 export const getMembers = async (pageRequest: IPageRequest) => {
   try {
@@ -125,23 +126,33 @@ export const getMembers = async (pageRequest: IPageRequest) => {
   }
 };
 
-// export const createMember = async (data: IMemberBase) => {
-//   try {
-//     const { password, ...otherDetails } = data;
-//     const hashedPassword = await hashPassword(password);
-//     const newUser = { password: hashedPassword, ...otherDetails };
-//     return memberRepo.create(data);
-//   } catch (err) {
-//     if (err instanceof Error) throw err;
-//   }
-// };
-
 export const updateMember = async (
   MemberId: number,
   data: Partial<IMemberBase>
 ) => {
   try {
     return memberRepo.update(MemberId, data);
+  } catch (err) {
+    if (err instanceof Error) throw err;
+  }
+};
+
+export const updateMemberPassword = async (
+  MemberId: number,
+  currentPassword: string,
+  newPassword: string
+) => {
+  try {
+    const passwordInDb = (await memberRepo.getAllData(MemberId))?.password;
+    if (passwordInDb) {
+      const isPasswordSame = await comparePassword(
+        currentPassword,
+        passwordInDb
+      );
+      if (!isPasswordSame) throw new Error("Passwords don't match");
+      const hashedPassword = await hashPassword(newPassword);
+      return memberRepo.update(MemberId, { password: hashedPassword });
+    } else throw new Error("Internal server problem");
   } catch (err) {
     if (err instanceof Error) throw err;
   }

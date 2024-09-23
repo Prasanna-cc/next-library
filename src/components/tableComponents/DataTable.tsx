@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -9,6 +9,7 @@ import {
   getPaginationRowModel,
   VisibilityState,
   getSortedRowModel,
+  HeaderContext,
 } from "@tanstack/react-table";
 import {
   Table,
@@ -19,7 +20,13 @@ import {
   TableCell,
 } from "../ui/table";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, ArrowRight, ChevronDown } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowLeftToLine,
+  ArrowRight,
+  ArrowRightToLine,
+  ChevronDown,
+} from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import {
@@ -31,6 +38,7 @@ import {
 import { IMember } from "@/lib/models/member.schema";
 import { IBook } from "@/lib/models/book.model";
 import { ITransactionTable } from "@/lib/models/transaction.model";
+import { useTranslations } from "next-intl";
 
 interface DataTableProps<T extends AllowedTypes> {
   data: T[];
@@ -57,6 +65,8 @@ export const DataTable = <T extends AllowedTypes>({
   totalPages,
   defaultVisibleColumns,
 }: DataTableProps<T>) => {
+  const t = useTranslations("Tables");
+
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
     () => {
       const initialVisibility: VisibilityState = {};
@@ -116,7 +126,7 @@ export const DataTable = <T extends AllowedTypes>({
                 variant="ghost"
                 className="hover:text-black text-xs text-slate-500 focus-visible:ring-0 focus-visible:shadow-none"
               >
-                Columns <ChevronDown className="ml-1 h-4 w-4" />
+                {t("Columns")} <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -140,17 +150,37 @@ export const DataTable = <T extends AllowedTypes>({
                         column.toggleVisibility(!!value);
                       }}
                     >
-                      {column.id}
+                      {t(
+                        `Headers.${
+                          column.id === "availableNumOfCopies"
+                            ? "available"
+                            : column.id === "numOfPages"
+                            ? "pages"
+                            : column.id === "totalNumOfCopies"
+                            ? "total"
+                            : column.id === "phoneNumber"
+                            ? "phone"
+                            : column.id
+                        }`
+                      )}
                     </DropdownMenuCheckboxItem>
                   );
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center gap-1">
           <span className="text-xs text-slate-500">
-            Page {currentPage} of {totalPages}
+            {t("Pagination", { current: currentPage, total: totalPages })}
           </span>
+          <Link href={createPageURL(1)}>
+            <Button className="px-3 text-slate-500" variant={"ghost"}>
+              <ArrowLeftToLine
+                className="w-4 h-4"
+                aria-disabled={currentPage === 1}
+              />
+            </Button>
+          </Link>
           <Link href={createPageURL(Math.max(1, currentPage - 1))}>
             <Button className="px-3 text-slate-500" variant={"ghost"}>
               <ArrowLeft
@@ -164,6 +194,14 @@ export const DataTable = <T extends AllowedTypes>({
               <ArrowRight
                 className="w-4 h-4"
                 aria-disabled={currentPage === totalPages}
+              />
+            </Button>
+          </Link>
+          <Link href={createPageURL(totalPages)}>
+            <Button className="px-3 text-slate-500" variant={"ghost"}>
+              <ArrowRightToLine
+                className="w-4 h-4"
+                aria-disabled={currentPage === 1}
               />
             </Button>
           </Link>
