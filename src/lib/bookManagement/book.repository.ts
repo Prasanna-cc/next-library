@@ -6,9 +6,9 @@ import {
   IBookBase,
 } from "@/lib/models/book.schema";
 import { IPageRequest, IPagedResponse } from "@/lib/core/pagination";
-import { count, eq, like, or, SQL } from "drizzle-orm";
+import { count, eq, ilike, like, or, SQL } from "drizzle-orm";
 import { db } from "@/lib/database/drizzle/db";
-import { Books } from "../database/drizzle/drizzleSchemaMySql";
+import { Books } from "@/lib/database/drizzle/drizzleSchema";
 import { AppError } from "../core/appError";
 
 export class BookRepository implements IRepository<IBookBase, IBook> {
@@ -24,10 +24,9 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
       const [result] = await db
         .insert(Books)
         .values(validatedData as IBook)
-        .$returningId();
-      if (result.id) {
-        const createdBook = await this.getById(result.id);
-        return createdBook;
+        .returning();
+      if (result) {
+        return result;
       } else throw new Error("There was a problem while creating the book");
     } catch (err) {
       if (err instanceof Error) {
@@ -62,11 +61,11 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
             validatedBook.totalNumOfCopies -
             (oldBook.totalNumOfCopies - validatedBook.availableNumOfCopies),
         };
-        const [result] = await db
+        const result = await db
           .update(Books)
           .set(updatedBook)
           .where(eq(Books.id, bookId));
-        if (result.affectedRows && result.affectedRows > 0) {
+        if (result.rowCount && result.rowCount > 0) {
           return updatedBook;
         } else throw new Error("There was a problem while updating the book");
       }
@@ -80,8 +79,8 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
     try {
       const deletedBook = await this.getById(bookId);
       if (deletedBook) {
-        const [result] = await db.delete(Books).where(eq(Books.id, bookId));
-        if (result.affectedRows && result.affectedRows > 0) {
+        const result = await db.delete(Books).where(eq(Books.id, bookId));
+        if (result.rowCount && result.rowCount > 0) {
           return deletedBook;
         } else throw new Error("There was a problem while deleting the book");
       }
@@ -109,12 +108,12 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
     if (params.search) {
       const search = `%${params.search.toLowerCase()}%`;
       searchWhereClause = or(
-        like(Books.id, search),
-        like(Books.title, search),
-        like(Books.isbnNo, search),
-        like(Books.genre, search),
-        like(Books.author, search),
-        like(Books.publisher, search)
+        ilike(Books.id, search),
+        ilike(Books.title, search),
+        ilike(Books.isbnNo, search),
+        ilike(Books.genre, search),
+        ilike(Books.author, search),
+        ilike(Books.publisher, search)
       );
     }
 

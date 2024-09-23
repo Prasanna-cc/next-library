@@ -2,10 +2,10 @@ import { IRepository } from "../core/repository";
 import { IMember, IMemberBase, IMemberDetails } from "../models/member.model";
 import { MemberBaseSchema } from "../models/member.schema";
 import { IPagedResponse, IPageRequest } from "../core/pagination";
-import { count, eq, like, or, SQL } from "drizzle-orm";
+import { count, eq, ilike, like, or, SQL } from "drizzle-orm";
 import { VercelPgDatabase } from "drizzle-orm/vercel-postgres";
 import { db } from "../database/drizzle/db";
-import { Members, Professors } from "../database/drizzle/drizzleSchemaMySql";
+import { Members, Professors } from "../database/drizzle/drizzleSchema";
 import { AppError } from "../core/appError";
 import { hashPassword } from "../hashPassword";
 import { IProfessorBase, IProfessor } from "../models/professor.model";
@@ -22,10 +22,10 @@ export class ProfessorRepository
       const [result] = await db
         .insert(Professors)
         .values(validatedData)
-        .$returningId();
+        .returning();
       if (result.id) {
-        const createdProfessor = await this.getById(result.id);
-        return createdProfessor;
+        // const createdProfessor = await this.getById(result.id);
+        return result;
       } else throw new Error("There was a problem while creating the member");
     } catch (err) {
       if (err instanceof Error) {
@@ -55,11 +55,11 @@ export class ProfessorRepository
         };
 
         const validatedProfessor = ProfessorSchemaBase.parse(updatedProfessor);
-        const [result] = await db
+        const result = await db
           .update(Professors)
           .set(validatedProfessor)
           .where(eq(Professors.id, ProfessorId));
-        if (result.affectedRows && result.affectedRows > 0) {
+        if (result.rowCount && result.rowCount > 0) {
           return updatedProfessor;
         } else
           throw new Error("There was a problem while updating the professor");
@@ -74,10 +74,10 @@ export class ProfessorRepository
     try {
       const deletedProfessor = await this.getById(professorId);
       if (deletedProfessor) {
-        const [result] = await db
+        const result = await db
           .delete(Professors)
           .where(eq(Professors.id, professorId));
-        if (result.affectedRows && result.affectedRows > 0) {
+        if (result.rowCount && result.rowCount > 0) {
           return deletedProfessor;
         } else
           throw new Error("There was a problem while deleting the professor");
@@ -107,8 +107,8 @@ export class ProfessorRepository
     if (params.search) {
       const search = `%${params.search.toLowerCase()}%`;
       searchWhereClause = or(
-        like(Professors.name, search),
-        like(Professors.email, search)
+        ilike(Professors.name, search),
+        ilike(Professors.email, search)
       );
     }
     try {

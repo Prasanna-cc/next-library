@@ -8,7 +8,18 @@ import {
 import { ITransactionBaseSchema } from "@/lib/models/transaction.schema";
 import { IBook } from "@/lib/models/book.schema";
 import { IPagedResponse, ITransactionPageRequest } from "@/lib/core/pagination";
-import { and, count, eq, isNull, like, not, or, sql, SQL } from "drizzle-orm";
+import {
+  and,
+  count,
+  eq,
+  ilike,
+  isNull,
+  like,
+  not,
+  or,
+  sql,
+  SQL,
+} from "drizzle-orm";
 import { AppError } from "../core/appError";
 import { VercelPgDatabase } from "drizzle-orm/vercel-postgres";
 import { format } from "date-fns";
@@ -17,7 +28,7 @@ import {
   Books,
   Members,
   Transactions,
-} from "../database/drizzle/drizzleSchemaMySql";
+} from "../database/drizzle/drizzleSchema";
 
 export class TransactionRepository
   implements
@@ -53,7 +64,7 @@ export class TransactionRepository
           const [result] = await trxn
             .insert(Transactions)
             .values(newTransaction)
-            .$returningId();
+            .returning();
           return result.id;
         });
         const issuedTransaction = (await this.getById(createdTrxnId))!;
@@ -151,11 +162,11 @@ export class TransactionRepository
             .set(updatedBook)
             .where(eq(Books.id, updatedBook.id));
 
-          const [result] = await trxn
+          const result = await trxn
             .update(Transactions)
             .set(transaction)
             .where(eq(Transactions.id, transaction.id));
-          return result.affectedRows;
+          return result.rowCount;
         });
         if (updated) {
           return transaction;
@@ -199,11 +210,11 @@ export class TransactionRepository
             .set(updatedBook)
             .where(eq(Books.id, updatedBook.id));
 
-          const [result] = await trxn
+          const result = await trxn
             .update(Transactions)
             .set(transaction)
             .where(eq(Transactions.id, transaction.id));
-          return result.affectedRows;
+          return result.rowCount;
         });
         if (updated) {
           return transaction;
@@ -246,11 +257,11 @@ export class TransactionRepository
             .set(updatedBook)
             .where(eq(Books.id, updatedBook.id));
 
-          const [result] = await trxn
+          const result = await trxn
             .update(Transactions)
             .set(transaction)
             .where(eq(Transactions.id, transaction.id));
-          return result.affectedRows;
+          return result.rowCount;
         });
         if (updated) {
           return transaction;
@@ -344,12 +355,12 @@ export class TransactionRepository
       searchWhereClause = and(
         searchWhereClause,
         or(
-          like(Books.title, searchValue),
-          like(Members.name, searchValue),
-          like(Transactions.requestStatus, searchValue),
-          like(Transactions.bookStatus, searchValue),
-          like(Transactions.dateOfIssue, searchValue),
-          like(Transactions.dueDate, searchValue)
+          ilike(Books.title, searchValue),
+          ilike(Members.name, searchValue),
+          ilike(Transactions.requestStatus, searchValue),
+          ilike(Transactions.bookStatus, searchValue),
+          ilike(Transactions.dateOfIssue, searchValue),
+          ilike(Transactions.dueDate, searchValue)
         )
       );
     }

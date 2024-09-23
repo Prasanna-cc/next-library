@@ -2,10 +2,10 @@ import { IRepository } from "../core/repository";
 import { IMember, IMemberBase, IMemberDetails } from "../models/member.model";
 import { MemberBaseSchema } from "../models/member.schema";
 import { IPagedResponse, IPageRequest } from "../core/pagination";
-import { count, eq, like, or, SQL } from "drizzle-orm";
+import { count, eq, ilike, like, or, SQL } from "drizzle-orm";
 import { VercelPgDatabase } from "drizzle-orm/vercel-postgres";
 import { db } from "../database/drizzle/db";
-import { Members } from "../database/drizzle/drizzleSchemaMySql";
+import { Members } from "@/lib/database/drizzle/drizzleSchema";
 import { AppError } from "../core/appError";
 import { hashPassword } from "../hashPassword";
 // import { AppError } from "../networking/libs/appError.utils";
@@ -20,10 +20,13 @@ export class MemberRepository
     const newUser = { ...otherDetails, password: hashedPassword };
     // Execution of queries:
     try {
-      const [result] = await db.insert(Members).values(newUser).$returningId();
+      const [result] = await db
+        .insert(Members)
+        .values(validatedData as IMember)
+        .returning();
       if (result.id) {
-        const createdMember = await this.getById(result.id);
-        return createdMember;
+        // const createdMember = await this.getById(result.id);
+        return result;
       } else throw new Error("There was a problem while creating the member");
     } catch (err) {
       if (err instanceof Error) {
@@ -52,12 +55,11 @@ export class MemberRepository
           ...data,
         };
         const validatedMember = MemberBaseSchema.parse(updatedMember);
-        const [result] = await db
+        const result = await db
           .update(Members)
           .set(validatedMember)
           .where(eq(Members.id, MemberId));
-        if (result.affectedRows && result.affectedRows > 0) {
-          //TODO: remove password.
+        if (result.rowCount && result.rowCount > 0) {
           return updatedMember;
         } else throw new Error("There was a problem while updating the member");
       }
@@ -71,10 +73,8 @@ export class MemberRepository
     try {
       const deletedMember = await this.getById(memberId);
       if (deletedMember) {
-        const [result] = await db
-          .delete(Members)
-          .where(eq(Members.id, memberId));
-        if (result.affectedRows && result.affectedRows > 0) {
+        const result = await db.delete(Members).where(eq(Members.id, memberId));
+        if (result.rowCount && result.rowCount > 0) {
           return deletedMember;
         } else throw new Error("There was a problem while deleting the member");
       }
@@ -111,11 +111,11 @@ export class MemberRepository
     if (params.search) {
       const search = `%${params.search.toLowerCase()}%`;
       searchWhereClause = or(
-        like(Members.id, search),
-        like(Members.name, search),
-        like(Members.phoneNumber, search),
-        like(Members.address, search),
-        like(Members.email, search)
+        ilike(Members.id, search),
+        ilike(Members.name, search),
+        ilike(Members.phoneNumber, search),
+        ilike(Members.address, search),
+        ilike(Members.email, search)
       );
     }
     // const memberDetails = {
