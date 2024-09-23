@@ -13,6 +13,7 @@ import FilterComponent from "@/components/TransactionFilters";
 import { BookStatus, RequestStatus } from "@/lib/core/types";
 import OnlyRequestSwitch from "@/components/onlyRequestSwitch";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
+import ShowDueListSwitch from "@/components/DueListSwitch";
 
 async function AllTransactionsPage({
   searchParams,
@@ -23,6 +24,7 @@ async function AllTransactionsPage({
     page?: string;
     filter?: BookStatus | RequestStatus;
     onlyUnclaimed?: "true" | undefined;
+    showDueList?: "true" | undefined;
   };
   params: { locale: string };
 }) {
@@ -35,17 +37,20 @@ async function AllTransactionsPage({
   const query = searchParams?.query || "";
   const filter = searchParams?.filter || undefined;
   const onlyUnclaimed = searchParams?.onlyUnclaimed;
+  const showDueList = searchParams?.showDueList && "dueList";
 
   const pageRequest: ITransactionPageRequest = {
     id: session.user.id,
+    role: "admin",
     search: query,
     filterBy: filter,
-    data: "allTransactions",
+    data: !onlyUnclaimed ? "allTransactions" : "allRequests",
     offset: (page - 1) * ITEMS_PER_PAGE,
     limit: ITEMS_PER_PAGE,
   };
   const { items: allTransactions, pagination } = (await getTransactions(
-    pageRequest
+    pageRequest,
+    showDueList
   ))!;
 
   const totalPages = Math.ceil(pagination.total / ITEMS_PER_PAGE);
@@ -61,7 +66,13 @@ async function AllTransactionsPage({
       <div className="flex flex-col gap-3 justify-between items-center">
         <ToolBar
           firstHalf={<Search placeholder={t("searchPlaceholder")} />}
-          secondHalf={<FilterComponent className="max-w-52" />}
+          secondHalf={
+            <>
+              <FilterComponent className="max-w-52" />
+              {/* <OnlyRequestSwitch /> */}
+              <ShowDueListSwitch />
+            </>
+          }
         />
         {/* <UnclaimedSwitch /> */}
 

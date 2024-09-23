@@ -11,12 +11,18 @@ import {
   DialogHeader,
   DialogFooter,
   DialogTitle,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Edit } from "lucide-react";
-import { Form, FormItem, FormLabel, FormControl, FormMessage } from "./ui/form";
-import DeleteConfirmationDialog from "./DeleteConfirmationDialog"; // assume this is the delete confirmation dialog
+import {
+  Form,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import DeleteConfirmationDialog from "@/components/DeleteConfirmationDialog";
 import { deleteBook, updateBook } from "@/lib/actions";
 import { toast } from "@/hooks/use-toast";
 import { revalidatePath } from "next/cache";

@@ -7,8 +7,8 @@ export const MemberBaseSchema = z.object({
   age: z
     .number({ message: "Age must be a number." })
     .int()
-    .min(5, { message: "Member must be atleast 5 years old." })
-    .max(100, { message: "Member cannot live that long." }),
+    .min(12, { message: "Age should be 12 or older" })
+    .max(120, { message: "Modern human don't live that long." }),
   phoneNumber: z
     .string()
     .min(10, { message: "Phone number must be atleast 10 digits long." })

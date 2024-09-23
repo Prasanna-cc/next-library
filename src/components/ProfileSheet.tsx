@@ -24,13 +24,12 @@ import {
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { toast } from "@/hooks/use-toast";
-// import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 
 export const ProfileSheet = () => {
   const { data: session } = useSession();
-  const [isEditing, setIsEditing] = useState(false); // Track whether editing mode is on
+  const [isEditing, setIsEditing] = useState(false);
   const handleBack = () => setIsEditing(false);
   const t = useTranslations("Profile");
 
@@ -119,34 +118,13 @@ export const ProfileSheet = () => {
                   <div className="pb-3 flex justify-between items-center">
                     <h4 className="font-semibold">{t("due")}</h4>
                     <SheetClose asChild>
-                      <Link href="/dashboard/transactions">
+                      <Link href="/dashboard/transactions?showDueList=true">
                         <Button variant="ghost">
                           <ArrowRight className="h-5 w-5" />
                         </Button>
                       </Link>
                     </SheetClose>
                   </div>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Book Name</TableHead>
-                        <TableHead>Issue Date</TableHead>
-                        <TableHead>Return Date</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      <TableRow>
-                        <TableCell>Book 1</TableCell>
-                        <TableCell>2024-08-27</TableCell>
-                        <TableCell>2024-08-29</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>Book 2</TableCell>
-                        <TableCell>2024-08-28</TableCell>
-                        <TableCell>2024-08-30</TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
                 </div>
 
                 <hr className="my-4" />

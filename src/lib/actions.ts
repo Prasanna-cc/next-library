@@ -24,7 +24,9 @@ export const registerMember = async (details: IMemberBase) => {
     const result = await memberRepo.create(newUser);
     return "User registered successfully";
   } catch (err) {
-    if (err instanceof Error) throw err;
+    if (err instanceof Error)
+      // if (err instanceof AppError)
+      throw err;
   }
 };
 
@@ -81,7 +83,7 @@ export const requestBook = async (transactionRequest: ITransactionBase) => {
     if (response) return response.id;
   } catch (err) {
     // if (err instanceof AppError) return err.message;
-    if (err instanceof AppError) throw new AppError(400, err.message);
+    if (err instanceof AppError) throw new AppError(err.message);
   }
 };
 
@@ -205,9 +207,22 @@ export const returnBook = async (transactionId: number) => {
   }
 };
 
-export const getTransactions = async (pageRequest: ITransactionPageRequest) => {
+export const getTransactions = async (
+  pageRequest: ITransactionPageRequest,
+  data?: "dueList"
+) => {
   try {
-    return transactionRepo.list(pageRequest);
+    return data === "dueList"
+      ? transactionRepo.dueList(pageRequest)
+      : transactionRepo.list(pageRequest);
+  } catch (err) {
+    if (err instanceof Error) throw err;
+  }
+};
+
+export const getDueList = async (pageRequest: ITransactionPageRequest) => {
+  try {
+    return transactionRepo.dueList(pageRequest);
   } catch (err) {
     if (err instanceof Error) throw err;
   }

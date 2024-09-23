@@ -2,7 +2,7 @@ import { DataTable } from "@/components/tableComponents/DataTable";
 import ToolBar from "@/app/[locale]/(home)/ToolBar";
 import { TableSkeleton } from "@/components/skeletons/TableSkeleton";
 import { transactionColumns } from "@/components/tableComponents/TransactionDataColumns";
-import { getTransactions } from "@/lib/actions";
+import { getDueList, getTransactions } from "@/lib/actions";
 import { authOptions } from "@/lib/authOptions";
 import { ITransactionPageRequest } from "@/lib/core/pagination";
 import { getServerSession } from "next-auth";
@@ -17,6 +17,7 @@ import {
   getTranslations,
   unstable_setRequestLocale,
 } from "next-intl/server";
+import ShowDueListSwitch from "@/components/DueListSwitch";
 
 async function MyTransactionsPage({
   searchParams,
@@ -27,6 +28,7 @@ async function MyTransactionsPage({
     page?: string;
     filter?: BookStatus | RequestStatus;
     onlyRequests?: "true" | undefined;
+    showDueList?: "true" | undefined;
   };
   params: { locale: string };
 }) {
@@ -39,17 +41,20 @@ async function MyTransactionsPage({
   const query = searchParams?.query || "";
   const filter = searchParams?.filter || undefined;
   const onlyRequests = searchParams?.onlyRequests;
+  const showDueList = searchParams?.showDueList && "dueList";
 
   const pageRequest: ITransactionPageRequest = {
     id: session.user.id,
     search: query,
+    role: "user",
     filterBy: filter,
     data: !onlyRequests ? "transactions" : "requests",
     offset: (page - 1) * ITEMS_PER_PAGE,
     limit: ITEMS_PER_PAGE,
   };
   const { items: transactions, pagination } = (await getTransactions(
-    pageRequest
+    pageRequest,
+    showDueList
   ))!;
 
   const totalPages = Math.ceil(pagination.total / ITEMS_PER_PAGE);
@@ -69,6 +74,7 @@ async function MyTransactionsPage({
             <>
               <FilterComponent className="max-w-52" />
               <OnlyRequestSwitch />
+              <ShowDueListSwitch />
             </>
           }
           responsive

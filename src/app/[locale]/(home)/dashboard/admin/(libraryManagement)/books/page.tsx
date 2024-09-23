@@ -2,7 +2,7 @@ import { booksColumns } from "@/components/tableComponents/BooknMemberDataCols";
 import { searchBooks } from "@/lib/actions";
 import { TableWithPreview } from "../TableWithPreview";
 import CustomDialog from "@/components/CustomDialog";
-import BookForm from "@/components/displayAndInput/BookForm";
+import BookForm from "@/components/librarySpecificComponents/adminComponents/BookForm";
 import { Plus } from "lucide-react";
 import Search from "@/components/Search";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";

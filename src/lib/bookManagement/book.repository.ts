@@ -9,6 +9,7 @@ import { IPageRequest, IPagedResponse } from "@/lib/core/pagination";
 import { count, eq, like, or, SQL } from "drizzle-orm";
 import { db } from "@/lib/database/drizzle/db";
 import { Books } from "../database/drizzle/drizzleSchemaMySql";
+import { AppError } from "../core/appError";
 
 export class BookRepository implements IRepository<IBookBase, IBook> {
   async create(newBookdata: IBookBase): Promise<IBook | undefined> {
@@ -29,7 +30,16 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
         return createdBook;
       } else throw new Error("There was a problem while creating the book");
     } catch (err) {
-      if (err instanceof Error) throw new Error(err.message);
+      if (err instanceof Error) {
+        if (err.message.includes("Duplicate entry")) {
+          if (err.message.includes("isbnNo")) {
+            throw new AppError("Book with this ISBN No. already exists", {
+              duplicate: "isbnNo",
+            });
+          }
+        }
+        throw new Error(err.message);
+      }
     }
   }
   async update(

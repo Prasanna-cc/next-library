@@ -1,7 +1,11 @@
+interface DbError {
+  duplicate: "email" | "isbnNo";
+}
+
 export class AppError extends Error {
-  statusCode: number;
-  constructor(statusCode: number, message: string) {
+  dbError?: DbError;
+  constructor(message: string, dbError?: DbError) {
     super(message);
-    this.statusCode = statusCode;
+    this.dbError = dbError;
   }
 }

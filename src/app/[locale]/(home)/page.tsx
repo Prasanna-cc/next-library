@@ -1,5 +1,5 @@
 import { searchBooks } from "@/lib/actions";
-import BookCard from "@/components/BookCard";
+import BookCard from "@/components/librarySpecificComponents/BookCard";
 import ToolBar from "@/app/[locale]/(home)/ToolBar";
 import { unstable_setRequestLocale } from "next-intl/server";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -7,7 +7,7 @@ import { useLocale } from "next-intl";
 import SearchComponent from "@/components/Search";
 import PaginationComponent from "@/components/Pagination";
 
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 8;
 
 export default async function BooksPage({
   searchParams,
@@ -54,6 +54,9 @@ export default async function BooksPage({
             </div>
           ))
         )}
+      </div>
+      <div className="flex justify-center items-center">
+        <PaginationComponent currentPage={page} totalPages={totalPages} />
       </div>
     </div>
   );

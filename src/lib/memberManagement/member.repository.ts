@@ -6,6 +6,7 @@ import { count, eq, like, or, SQL } from "drizzle-orm";
 import { VercelPgDatabase } from "drizzle-orm/vercel-postgres";
 import { db } from "../database/drizzle/db";
 import { Members } from "../database/drizzle/drizzleSchemaMySql";
+import { AppError } from "../core/appError";
 // import { AppError } from "../networking/libs/appError.utils";
 
 export class MemberRepository
@@ -25,7 +26,16 @@ export class MemberRepository
         return createdMember;
       } else throw new Error("There was a problem while creating the member");
     } catch (err) {
-      if (err instanceof Error) throw new Error(err.message);
+      if (err instanceof Error) {
+        if (err.message.includes("Duplicate entry")) {
+          if (err.message.includes("email")) {
+            throw new AppError("User with this email already exists", {
+              duplicate: "email",
+            });
+          }
+        }
+        throw err;
+      }
     }
   }
 

@@ -3,7 +3,7 @@ import { getMembers } from "@/lib/actions";
 import { TableWithPreview } from "../TableWithPreview";
 import CustomDialog from "@/components/CustomDialog";
 import { Plus } from "lucide-react";
-import MemberForm from "@/components/displayAndInput/MemberForm";
+import MemberForm from "@/components/librarySpecificComponents/adminComponents/MemberForm";
 import Search from "@/components/Search";
 import ToolBar from "@/app/[locale]/(home)/ToolBar";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";

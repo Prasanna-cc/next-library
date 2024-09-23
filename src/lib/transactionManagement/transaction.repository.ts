@@ -11,6 +11,7 @@ import { IPagedResponse, ITransactionPageRequest } from "@/lib/core/pagination";
 import { and, count, eq, isNull, like, not, or, sql, SQL } from "drizzle-orm";
 import { AppError } from "../core/appError";
 import { VercelPgDatabase } from "drizzle-orm/vercel-postgres";
+import { format } from "date-fns";
 import { db } from "../database/drizzle/db";
 import {
   Books,
@@ -59,13 +60,12 @@ export class TransactionRepository
         return issuedTransaction;
       } else {
         throw new AppError(
-          400,
           "The book is not available or has no available copies."
         );
       }
     } catch (err) {
       if (err instanceof AppError) {
-        throw new AppError(400, err.message);
+        throw new AppError(err.message);
       }
     }
   }
@@ -177,7 +177,7 @@ export class TransactionRepository
       const transaction = await this.getById(id);
       if (transaction) {
         if (transaction.requestStatus === "approved") {
-          throw new AppError(400, "This book has already been approved.");
+          throw new AppError("This book has already been approved.");
         }
 
         let book = await this.bookRepo.getById(transaction.bookId);
@@ -271,6 +271,12 @@ export class TransactionRepository
     params: ITransactionPageRequest
   ): Promise<IPagedResponse<ITransactionTable> | null | undefined> {
     let searchWhereClause: SQL | undefined;
+    let customOrder = sql`CASE 
+    WHEN ${Transactions.requestStatus} = 'approved' THEN 1
+    WHEN ${Transactions.requestStatus} = 'rejected' THEN 2
+    WHEN ${Transactions.requestStatus} = 'requested' THEN 3
+    ELSE 4
+  END`;
 
     switch (params.data) {
       case "requests": {
@@ -302,8 +308,15 @@ export class TransactionRepository
           .where(eq(Members.id, params.id));
         if (member.role === "admin")
           searchWhereClause = and(
-            eq(Transactions.bookStatus, "pending"),
             or(
+              and(
+                not(eq(Transactions.bookStatus, "issued")),
+                not(eq(Transactions.bookStatus, "returned"))
+              ),
+              isNull(Transactions.bookStatus)
+            ),
+            or(
+              eq(Transactions.requestStatus, "rejected"),
               eq(Transactions.requestStatus, "requested"),
               eq(Transactions.requestStatus, "approved")
             )
@@ -315,6 +328,12 @@ export class TransactionRepository
           .from(Members)
           .where(eq(Members.id, params.id));
         if (member.role === "admin") {
+          customOrder = sql`CASE 
+          WHEN ${Transactions.requestStatus} = 'requested' THEN 1
+          WHEN ${Transactions.requestStatus} = 'approved' THEN 2
+          WHEN ${Transactions.requestStatus} = 'rejected' THEN 3
+          ELSE 4
+          END`;
         }
         // searchWhereClause = not(eq(Transactions.requestStatus, "requested"));
       }
@@ -374,13 +393,6 @@ export class TransactionRepository
       }
     }
 
-    const customOrder = sql`CASE 
-    WHEN ${Transactions.requestStatus} = 'approved' THEN 1
-    WHEN ${Transactions.requestStatus} = 'rejected' THEN 2
-    WHEN ${Transactions.requestStatus} = 'requested' THEN 3
-    ELSE 4
-  END`;
-
     // Execution of queries:
     try {
       let matchedTransactions: ITransactionTable[];
@@ -430,6 +442,116 @@ export class TransactionRepository
           offset: params.offset,
           limit: params.limit,
           total: totalMatchedBooks.count,
+        },
+      };
+    } catch (err) {
+      if (err instanceof Error) throw new Error(err.message);
+    }
+  }
+
+  async dueList(params: Omit<ITransactionPageRequest, "data">) {
+    const today = new Date();
+    const twoDaysAfterToday = new Date(today);
+    twoDaysAfterToday.setDate(today.getDate() + 2);
+
+    // Format dates to match the database format (e.g., 'YYYY-MM-DD')
+    const todayFormatted = format(today, "EEE MMM dd yyyy");
+    const twoDaysAfterFormatted = format(twoDaysAfterToday, "EEE MMM dd yyyy");
+
+    let searchWhereClause: SQL | undefined = not(
+      eq(Transactions.bookStatus, "returned")
+    );
+    // Build the query conditions
+    if (params.role !== "admin") {
+      // For non-admins, filter by memberId
+      searchWhereClause = and(
+        searchWhereClause,
+        eq(Transactions.memberId, params.id)
+      );
+    }
+    if (params.search) {
+      //TODO: search in books and member table and join that match with the corresponding transaction.
+      const searchValue = `%${params.search.toLowerCase()}%`;
+      searchWhereClause = and(
+        searchWhereClause,
+        or(
+          like(Books.title, searchValue),
+          like(Members.name, searchValue),
+          like(Transactions.requestStatus, searchValue),
+          like(Transactions.bookStatus, searchValue),
+          like(Transactions.dateOfIssue, searchValue),
+          like(Transactions.dueDate, searchValue)
+        )
+      );
+    }
+    try {
+      // Add the due date condition for both admin and non-admin users
+      // const dueDateCondition = sql`(Transactions."dueDate" <= ${todayFormatted} OR Transactions."dueDate" <= ${twoDaysAfterFormatted})`;
+
+      // // Combine memberId and dueDate conditions
+      // if (searchWhereClause) {
+      //   searchWhereClause = sql`${searchWhereClause} AND ${dueDateCondition}`;
+      // } else {
+      //   searchWhereClause = dueDateCondition;
+      // }
+
+      const transactionDetails = {
+        id: Transactions.id,
+        bookTitle: Books.title,
+        memberName: Members.name,
+        requestStatus: Transactions.requestStatus,
+        bookStatus: Transactions.bookStatus,
+        dueDate: Transactions.dueDate,
+        dateOfIssue: Transactions.dateOfIssue,
+      };
+
+      // Fetch matched transactions with the ordering by dueDate
+      const matchedTransactions: ITransactionTable[] = (await db
+        .select(transactionDetails)
+        .from(Transactions)
+        .leftJoin(Books, eq(Transactions.bookId, Books.id))
+        .leftJoin(Members, eq(Transactions.memberId, Members.id))
+        .where(searchWhereClause)) as unknown as ITransactionTable[];
+      // .orderBy(
+      //   sql`CASE
+      //         WHEN Transactions."dueDate" < ${todayFormatted} THEN 1
+      //         WHEN Transactions."dueDate" BETWEEN ${todayFormatted} AND ${twoDaysAfterFormatted} THEN 2
+      //         ELSE 3
+      //       END`
+      // )
+      // .offset(params.offset)
+      // .limit(params.limit)
+
+      console.log("today: ", today);
+      console.log("twoDaysAfterToday: ", twoDaysAfterToday);
+
+      const filteredTransactions = matchedTransactions.filter((transaction) => {
+        const dueDate = new Date(transaction.dueDate);
+        console.log("dueDate: ", dueDate, " dbDueDate: ", transaction.dueDate);
+        // dueDate <= today &&
+        return dueDate <= twoDaysAfterToday;
+      });
+      const mappedResults = filteredTransactions.map((transaction) => ({
+        ...transaction,
+        requestStatus: transaction.requestStatus ?? "cancelled",
+        bookStatus: transaction.bookStatus ?? "not issued",
+      }));
+
+      // Count the total matching entries
+      // const [totalMatchedBooks] = await db
+      //   .select({ count: count() })
+      //   .from(Transactions)
+      //   .leftJoin(Books, eq(Transactions.bookId, Books.id))
+      //   .leftJoin(Members, eq(Transactions.memberId, Members.id))
+      //   .where(searchWhereClause);
+
+      // Return the result with pagination
+      return {
+        items: mappedResults,
+        pagination: {
+          offset: params.offset,
+          limit: params.limit,
+          total: mappedResults.length,
         },
       };
     } catch (err) {

@@ -1,6 +1,6 @@
 "use client";
 
-import BookDrawer from "@/components/BookDrawer";
+import BookDrawer from "@/components/librarySpecificComponents/BookDrawer";
 import { DataTable } from "@/components/tableComponents/DataTable";
 import { TableSkeleton } from "@/components/skeletons/TableSkeleton";
 import { ColumnDef } from "@tanstack/react-table";
@@ -11,7 +11,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { IBook } from "@/lib/models/book.model";
-import { CustomCard } from "@/components/displayAndInput/CustomCard";
+import { CustomCard } from "@/components/librarySpecificComponents/adminComponents/GeneralCard";
 import { IMember } from "@/lib/models/member.model";
 
 export type AllowedDataTypes = IBook | IMember;

@@ -59,7 +59,9 @@ export default function FilterComponent({ ...delegated }: FilterProps) {
       params.delete("filter");
     } else {
       params.set("filter", selection);
+      params.delete("page");
       params.delete("onlyRequests");
+      params.delete("showDueList");
     }
 
     replace(`${pathName}?${params.toString()}`);

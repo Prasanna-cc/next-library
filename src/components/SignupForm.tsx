@@ -5,34 +5,20 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Form, FormItem, FormLabel, FormControl, FormMessage } from "./ui/form";
+import { Form, FormItem, FormControl, FormMessage } from "./ui/form";
 import { usePathname, useSearchParams } from "next/navigation";
 import { registerMember } from "@/lib/actions";
 import { IMemberBase } from "@/lib/models/member.model";
-import { Providers } from "@/lib/models/providers.model";
 import { useEffect } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { MemberBaseSchema } from "@/lib/models/member.schema";
 
 // Zod schema for validation
-const signupSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
+const signupSchema = MemberBaseSchema.omit({ role: true }).extend({
+  age: z.string().refine((val) => parseInt(val, 10) >= 12, {
+    message: "Age should be 12 or older.",
   }),
-  age: z.string().refine((val) => parseInt(val, 10) >= 18, {
-    message: "Age should be 18 or older",
-  }),
-  phoneNumber: z.string().regex(/^\d{10}$/, "Phone number should be 10 digits"),
-  email: z.string().email("Email should be valid"),
-  address: z.string().min(5, "Address is too small"),
-  password: z
-    .string()
-    .min(8, "Password should be at least 8 characters long")
-    .regex(/[A-Z]/, "Password should contain a capital letter")
-    .regex(
-      /[!@#$%^&*(),.?":{}|<>]/,
-      "Password should contain a special character"
-    ),
 });
 
 type SignupFormValues = z.infer<typeof signupSchema>;
@@ -58,15 +44,29 @@ export const SignupForm = () => {
     const newMember: IMemberBase = {
       ...data,
       age: Number(data.age),
-      role: "admin",
+      role: "user",
     };
-    const result = await registerMember(newMember);
-    await signIn("credentials", {
-      email: data.email,
-      password: data.password,
-      redirect: false,
-    });
+
+    try {
+      const result = await registerMember(newMember);
+      await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+    } catch (err) {
+      if (
+        err instanceof Error &&
+        err.message.includes("email already exists")
+      ) {
+        form.setError("email", {
+          type: "manual",
+          message: err.message,
+        });
+      }
+    }
   };
+
   return (
     <div>
       <Form {...form}>
@@ -105,7 +105,7 @@ export const SignupForm = () => {
                   placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
                 />
               </FormControl>
-              <div className="min-h-[1rem]">
+              <div className="">
                 {form.formState.errors[field as keyof SignupFormValues] ? (
                   <FormMessage className="pl-3 text-red-500 text-xs">
                     {

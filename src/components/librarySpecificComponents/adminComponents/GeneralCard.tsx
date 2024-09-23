@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { IBook } from "@/lib/models/book.model";
 import { IMember } from "@/lib/models/member.model";
 import {
   Card,
@@ -25,22 +24,39 @@ import {
 } from "lucide-react";
 import BookForm from "./BookForm";
 import MemberForm from "./MemberForm";
+import { IBook } from "@/lib/models/book.schema";
 
 type BookCardProps = {
   book: IBook;
 };
 
-export const BooksCard = ({ book }: BookCardProps) => {
+export const BooksCard = ({ book: initialBook }: BookCardProps) => {
+  useEffect(() => {
+    setBook(initialBook);
+  }, [initialBook]);
+  const [book, setBook] = useState(initialBook);
   const [isEditing, setIsEditing] = useState(false);
   const content = [
-    { label: "Author", icon: <User className="w-4 h-4" />, value: book.author },
+    {
+      label: "Author",
+      icon: <User className="w-4 h-4" />,
+      value: book.author,
+    },
     {
       label: "Publisher",
       icon: <Building className="w-4 h-4" />,
       value: book.publisher,
     },
-    { label: "Genre", icon: <Book className="w-4 h-4" />, value: book.genre },
-    { label: "ISBN", icon: <Hash className="w-4 h-4" />, value: book.isbnNo },
+    {
+      label: "Genre",
+      icon: <Book className="w-4 h-4" />,
+      value: book.genre,
+    },
+    {
+      label: "ISBN",
+      icon: <Hash className="w-4 h-4" />,
+      value: book.isbnNo,
+    },
     {
       label: "Pages",
       icon: <FileText className="w-4 h-4" />,
@@ -58,11 +74,16 @@ export const BooksCard = ({ book }: BookCardProps) => {
     },
   ];
 
+  const handleBookUpdate = (updatedBook?: IBook) => {
+    if (updatedBook) setBook(updatedBook);
+    setIsEditing(false);
+  };
+
   return (
     <Card className="max-w-96 w-full min-w-72 max-h-full flex flex-col overflow-y-auto no-scrollbar">
       {isEditing ? (
         <div className="relative p-4 w-full h-full">
-          <BookForm book={book} handleBack={() => setIsEditing(false)} />
+          <BookForm book={book} handleBack={handleBookUpdate} />
         </div>
       ) : (
         <>

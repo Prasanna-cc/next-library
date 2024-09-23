@@ -6,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useTranslations } from "next-intl";
 
-export default function OnlyRequestSwitch() {
+export default function ShowDueListSwitch() {
   const searchParams = useSearchParams();
   const pathName = usePathname();
   const { replace } = useRouter();
@@ -14,18 +14,19 @@ export default function OnlyRequestSwitch() {
   const t = useTranslations("TransactionsPage");
 
   useEffect(() => {
-    const currentUnclaimed = searchParams.get("onlyRequests");
+    const currentUnclaimed = searchParams.get("showDueList");
     setIsUnclaimed(currentUnclaimed === "true");
   }, [searchParams]);
 
   const handleSwitch = (checked: boolean) => {
     const params = new URLSearchParams(searchParams);
     if (checked) {
-      params.set("onlyRequests", "true");
+      params.set("showDueList", "true");
+      params.delete("page");
       params.delete("filter");
-      params.delete("showDueList");
-    } else {
       params.delete("onlyRequests");
+    } else {
+      params.delete("showDueList");
     }
     setIsUnclaimed(checked);
     replace(`${pathName}?${params.toString()}`);
@@ -34,12 +35,12 @@ export default function OnlyRequestSwitch() {
   return (
     <div className="flex items-center space-x-2">
       <Switch
-        id="unclaimed-mode"
+        id="due-unclaimed-mode"
         checked={isUnclaimed}
         onCheckedChange={handleSwitch}
       />
-      <Label htmlFor="unclaimed-mode" className="text-sm text-slate-500">
-        {t("onlyRequestSwitch")}
+      <Label htmlFor="due-unclaimed-mode" className="text-sm text-slate-500">
+        Show Due List
       </Label>
     </div>
   );

@@ -17,16 +17,16 @@ import DeleteConfirmationDialog from "@/components/DeleteConfirmationDialog";
 import { createBook, updateBook } from "@/lib/actions";
 import { toast } from "@/hooks/use-toast";
 import { X, Upload } from "lucide-react";
-import { onDeleteBook } from "../EditBookDialog";
+import { onDeleteBook } from "./EditBookDialog";
 import { IBookBase } from "@/lib/models/book.model";
-import { Progress } from "../ui/progress";
+import { Progress } from "../../ui/progress";
 import { useEdgeStore } from "@/lib/edgestore";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 
 type BookFormProps = {
   book?: IBook;
-  handleBack?: () => void;
+  handleBack?: (updatedBook?: IBook) => void;
 };
 
 const BookForm = ({ book, handleBack }: BookFormProps) => {
@@ -154,6 +154,15 @@ const BookForm = ({ book, handleBack }: BookFormProps) => {
         title: "Could not add the book",
         description: "Please try again.",
       });
+      if (
+        err instanceof Error &&
+        err.message.includes("ISBN No. already exists")
+      ) {
+        form.setError("isbnNo", {
+          type: "manual",
+          message: err.message,
+        });
+      }
     }
   };
 
@@ -163,20 +172,21 @@ const BookForm = ({ book, handleBack }: BookFormProps) => {
       const response = await updateBook(book.id, { ...data, imageUrl });
 
       if (response) {
-        if (previousImageUrl && imageUrl !== previousImageUrl) {
+        if (imageUrl !== previousImageUrl) {
           if (imageUrl)
             await edgestore.publicFiles.confirmUpload({
               url: imageUrl,
             });
-          await edgestore.publicFiles.delete({
-            url: previousImageUrl,
-          });
+          if (previousImageUrl)
+            await edgestore.publicFiles.delete({
+              url: previousImageUrl,
+            });
         }
         toast({
           variant: "default",
           title: "Changes updated successfully",
         });
-        handleBack?.();
+        handleBack?.({ ...book, ...data, imageUrl });
       }
     } catch (err) {
       toast({
@@ -200,7 +210,7 @@ const BookForm = ({ book, handleBack }: BookFormProps) => {
             {book ? "Edit Book" : "Add Book"}
           </FormLabel>
           {book ? (
-            <Button variant="ghost" onClick={handleBack}>
+            <Button variant="ghost" onClick={() => handleBack?.(book)}>
               <X className="w-4 h-4" />
             </Button>
           ) : (
@@ -220,7 +230,7 @@ const BookForm = ({ book, handleBack }: BookFormProps) => {
                   })}
                 />
               </FormControl>
-              <div className="text-red-600 min-h-4 overflow-x-auto no-scrollbar">
+              <div className="text-red-600 overflow-x-auto no-scrollbar">
                 <FormMessage className="text-xs">
                   {form.formState.errors[field.name as keyof IBook]?.message}
                 </FormMessage>
@@ -242,11 +252,12 @@ const BookForm = ({ book, handleBack }: BookFormProps) => {
                   {imageUrl ? (
                     <div className="flex flex-col items-center">
                       <Image
-                        width={1000}
-                        height={1000}
+                        layout="responsive"
+                        width={100}
+                        height={100}
+                        className="max-w-40 max-h-48 mb-2"
                         src={imageUrl}
                         alt="Book cover"
-                        className=" mb-2"
                       />
                       <p>
                         Drag & drop to replace or click to select a new image

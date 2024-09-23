@@ -6,10 +6,10 @@ import {
   DrawerTrigger,
   DrawerContent,
   DrawerFooter,
-} from "./ui/drawer";
-import { Button } from "./ui/button";
-import { CardContent } from "./ui/card";
-import { Badge } from "./ui/badge";
+} from "../ui/drawer";
+import { Button } from "../ui/button";
+import { CardContent } from "../ui/card";
+import { Badge } from "../ui/badge";
 import {
   Book,
   User,
@@ -24,8 +24,8 @@ import { toast } from "@/hooks/use-toast";
 import { IBook } from "@/lib/models/book.model";
 import { cancelRequest, requestBook } from "@/lib/actions";
 import { useSession } from "next-auth/react";
-import EditBookDialog from "./EditBookDialog";
-import { LoginDialog } from "./LoginForm";
+import EditBookDialog from "./adminComponents/EditBookDialog";
+import { LoginDialog } from "../LoginForm";
 import { AppError } from "@/lib/core/appError";
 import Image from "next/image";
 import clsx from "clsx";
@@ -203,22 +203,22 @@ const BookDrawer = ({
           <DrawerFooter className="absolute p-0  w-full bottom-0 bg-background/20 backdrop-blur backdrop-brightness-105">
             <div className="flex flex-col ">
               <div className="w-full md:hidden flex justify-end gap-2">
-                {book.availableNumOfCopies === 0 && (
-                  <Badge variant="destructive" className="text-xs">
-                    Not Available
-                  </Badge>
-                )}
-                {book.availableNumOfCopies > 0 &&
-                  book.availableNumOfCopies < 3 && (
-                    <Badge
-                      variant="secondary"
-                      className="bg-transparent text-red-500 text-xs"
-                    >
-                      Only few left!
-                    </Badge>
-                  )}
                 <div className="flex flex-col items-end">
-                  <span className="text-xl">
+                  <span className="text-xl flex gap-1 items-center">
+                    {book.availableNumOfCopies === 0 && (
+                      <Badge variant="destructive" className="text-xs">
+                        Not Available
+                      </Badge>
+                    )}
+                    {book.availableNumOfCopies > 0 &&
+                      book.availableNumOfCopies < 3 && (
+                        <Badge
+                          variant="secondary"
+                          className="bg-transparent text-red-500 text-xs"
+                        >
+                          Only few left!
+                        </Badge>
+                      )}
                     <span className="text-green-500 font-extralight">
                       -15%{" "}
                     </span>
@@ -244,7 +244,7 @@ const BookDrawer = ({
                   {requestId && (
                     <Button
                       variant="destructive"
-                      className="w-full md:w-1/2"
+                      className="w-full md:w-1/2 md:max-w-72"
                       onClick={handleCancel}
                     >
                       Cancel
