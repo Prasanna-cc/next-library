@@ -29,6 +29,7 @@ import MemberForm from "./MemberForm";
 import { IBook } from "@/lib/models/book.schema";
 import PriceTag from "@/components/PriceTag";
 import PriceSkeleton from "@/components/skeletons/PriceSkeleton";
+import MemberEditForm from "./MemberEditForm";
 
 type BookCardProps = {
   book: IBook;
@@ -194,7 +195,10 @@ export const MembersCard = ({ member }: MemberCardProps) => {
     <Card className="w-full min-w-72 max-h-full max-w-sm flex flex-col overflow-y-auto no-scrollbar">
       {isEditing ? (
         <div className="relative w-full h-full p-4">
-          <MemberForm member={member} handleBack={() => setIsEditing(false)} />
+          <MemberEditForm
+            member={member}
+            handleBack={() => setIsEditing(false)}
+          />
         </div>
       ) : (
         <>

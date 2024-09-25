@@ -62,11 +62,10 @@ type MemberFormProps = {
   handleBack?: () => void;
 };
 
-const MemberForm = ({ member, handleBack }: MemberFormProps) => {
-  if (member) return <MemberEditForm member={member} handleBack={handleBack} />;
+const MemberForm = ({ handleBack }: MemberFormProps) => {
   const form = useForm<IMember>({
     resolver: zodResolver(MemberSchema),
-    defaultValues: member || {
+    defaultValues: {
       name: "",
       age: 0,
       email: "",

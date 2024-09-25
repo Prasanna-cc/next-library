@@ -105,6 +105,18 @@ export const ProfessorSplitViews = ({
         </Suspense>
       }
       secondView={renderSecondView()}
+      mobileView={
+        <Suspense fallback={<TableSkeleton cols={2} />}>
+          <DataTable
+            currentPage={currentPage}
+            totalPages={totalPages}
+            data={data}
+            onRowClick={handleRowClick}
+            columns={professorColumn(handleEditClick, "mobileView")}
+            cardMode
+          />
+        </Suspense>
+      }
     />
   );
 };

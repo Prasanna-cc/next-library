@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import ProfessorForm from "./adminComponents/ProfessorForm";
 import { IProfessor } from "@/lib/models/professor.model";
 import CustomDialog from "../CustomDialog";
+import { Link } from "@/i18n/routing";
 
 interface ProfessorCardProps {
   // name: string;
@@ -15,6 +16,7 @@ interface ProfessorCardProps {
   // email: string;
   details: Partial<IProfessor>;
   editHandler?: () => void;
+  isMobileView?: boolean;
 }
 
 const ProfessorCard: React.FC<ProfessorCardProps> = ({
@@ -23,6 +25,7 @@ const ProfessorCard: React.FC<ProfessorCardProps> = ({
   // email,
   details,
   editHandler,
+  isMobileView,
 }) => {
   const { data: session } = useSession();
 
@@ -68,6 +71,17 @@ const ProfessorCard: React.FC<ProfessorCardProps> = ({
             {details.email}
           </div>
         </div>
+        {isMobileView && (
+          <div className="w-full flex justify-end">
+            {details.eventLink ? (
+              <Link href={`/dashboard/sessions?eventLink=${details.eventLink}`}>
+                <Button>View Sessions</Button>
+              </Link>
+            ) : (
+              <span className="text-xs text-slate-500">no sessions yet...</span>
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

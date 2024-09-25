@@ -30,6 +30,7 @@ interface Props<T extends AllowedDataTypes> {
   // defaultTableColumns: string[];
   firstView: React.ReactNode;
   secondView: React.ReactNode;
+  mobileView?: React.ReactNode;
   firstViewSize?: SizeControl;
   secondViewSize?: SizeControl;
 }
@@ -41,6 +42,7 @@ export const SplitViews = <T extends AllowedDataTypes>({
   // defaultTableColumns,
   firstView,
   secondView,
+  mobileView,
   firstViewSize,
   secondViewSize,
 }: Props<T>) => {
@@ -108,7 +110,7 @@ export const SplitViews = <T extends AllowedDataTypes>({
             defaultVisibleColumns={defaultTableColumns}
           />
         </Suspense> */}
-        {firstView}
+        {mobileView || firstView}
       </div>
     </div>
   );

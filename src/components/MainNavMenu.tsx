@@ -14,7 +14,7 @@ interface NavMenuProps {
   userDetails: IMember | undefined | null;
 }
 
-export const MainNavMenu = memo(({ userDetails }: NavMenuProps) => {
+const NavMenuComponent = ({ userDetails }: NavMenuProps) => {
   const { data: session, status } = useSession();
 
   if (status === "loading") {
@@ -35,4 +35,6 @@ export const MainNavMenu = memo(({ userDetails }: NavMenuProps) => {
   ) : (
     <LoginDialog />
   );
-});
+};
+
+export const MainNavMenu = memo(NavMenuComponent);
