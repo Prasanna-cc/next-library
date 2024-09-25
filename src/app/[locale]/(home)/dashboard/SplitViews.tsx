@@ -13,33 +13,50 @@ import {
 import { IBook } from "@/lib/models/book.model";
 import { CustomCard } from "@/components/librarySpecificComponents/adminComponents/GeneralCard";
 import { IMember } from "@/lib/models/member.model";
+import { IProfessor } from "@/lib/models/professor.model";
 
-export type AllowedDataTypes = IBook | IMember;
+export type AllowedDataTypes = IBook | IMember | IProfessor;
+
+interface SizeControl {
+  minSize?: number;
+  defaultSize?: number;
+}
 
 interface Props<T extends AllowedDataTypes> {
-  data: T[];
-  columns: ColumnDef<Partial<T>>[];
-  currentPage: number;
-  totalPages: number;
-  defaultTableColumns: string[];
+  // columns: ColumnDef<Partial<T>>[];
+  // data: T[];
+  // currentPage: number;
+  // totalPages: number;
+  // defaultTableColumns: string[];
+  firstView: React.ReactNode;
+  secondView: React.ReactNode;
+  firstViewSize?: SizeControl;
+  secondViewSize?: SizeControl;
 }
-export const TableWithPreview = <T extends AllowedDataTypes>({
-  data,
-  columns,
-  defaultTableColumns,
-  currentPage,
-  totalPages,
+export const SplitViews = <T extends AllowedDataTypes>({
+  // columns,
+  // data,
+  // totalPages,
+  // currentPage,
+  // defaultTableColumns,
+  firstView,
+  secondView,
+  firstViewSize,
+  secondViewSize,
 }: Props<T>) => {
-  const [selectedRow, setSelectedRow] = useState<T | null>(null);
-  const selectOnRowClick = (data: T) => setSelectedRow(data);
+  // const [selectedRow, setSelectedRow] = useState<T | null>(null);
+  // const selectOnRowClick = (data: T) => setSelectedRow(data);
   return (
     <div>
       {/* For medium and larger screens */}
       <div className="hidden md:flex ">
         <ResizablePanelGroup direction="horizontal">
           {/* Table Panel */}
-          <ResizablePanel minSize={50} defaultSize={60}>
-            <Suspense fallback={<TableSkeleton cols={2} />}>
+          <ResizablePanel
+            minSize={firstViewSize?.minSize ?? 50}
+            defaultSize={firstViewSize?.defaultSize ?? 60}
+          >
+            {/* <Suspense fallback={<TableSkeleton cols={2} />}>
               <DataTable
                 currentPage={currentPage}
                 totalPages={totalPages}
@@ -48,7 +65,8 @@ export const TableWithPreview = <T extends AllowedDataTypes>({
                 columns={columns}
                 defaultVisibleColumns={defaultTableColumns}
               />
-            </Suspense>
+            </Suspense> */}
+            {firstView}
           </ResizablePanel>
 
           {/* Handle for resizing */}
@@ -57,10 +75,13 @@ export const TableWithPreview = <T extends AllowedDataTypes>({
           {/* Preview Panel */}
           <ResizablePanel
             className="flex justify-center items-center bg-slate-100"
-            defaultSize={40}
+            minSize={secondViewSize?.minSize}
+            defaultSize={secondViewSize?.defaultSize ?? 40}
           >
-            <div className="p-4 w-full h-full max-h-[540px] overflow-y-scroll no-scrollbar flex justify-center items-center">
-              {selectedRow ? (
+            {/* <div className="p-4 w-full h-full overflow-y-scroll no-scrollbar flex justify-center items-center"> */}
+            {secondView}
+            {/* </div> */}
+            {/* {selectedRow ? (
                 isBook(selectedRow) ? (
                   <CustomCard data={selectedRow} />
                 ) : isMember(selectedRow) ? (
@@ -71,14 +92,13 @@ export const TableWithPreview = <T extends AllowedDataTypes>({
                   <p>Select a row</p>
                   <p>to view its details here</p>
                 </div>
-              )}
-            </div>
+              )} */}
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
       {/* For mobile screens */}
       <div className="flex md:hidden">
-        <Suspense fallback={<TableSkeleton cols={2} />}>
+        {/* <Suspense fallback={<TableSkeleton cols={2} />}>
           <DataTable
             currentPage={currentPage}
             totalPages={totalPages}
@@ -87,7 +107,8 @@ export const TableWithPreview = <T extends AllowedDataTypes>({
             columns={columns}
             defaultVisibleColumns={defaultTableColumns}
           />
-        </Suspense>
+        </Suspense> */}
+        {firstView}
       </div>
     </div>
   );

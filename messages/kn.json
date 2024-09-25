@@ -7,16 +7,23 @@
         "title": "ಜ್ಞಾನ"
     },
     "MainNavMenu": {
-        "adminDashboardMenu": "ನಿರ್ವಹಿಸಿ",
+        "menu": "ಮೆನು",
         "allTransactions": "ಎಲ್ಲಾ ವಹಿವಾಟುಗಳು",
-        "userTransactions": "ನನ್ನ ವಹಿವಾಟುಗಳು",
         "books": "ಪುಸ್ತಕಗಳು",
         "members": "ಸದಸ್ಯರು"
     },
     "Profile": {
         "title": "ಪ್ರೊಫೈಲ್",
+        "account": "ಖಾತೆ",
         "requests": "ನನ್ನ ವಿನಂತಿಗಳು",
-        "due": "ಬಾಕಿ ಪಟ್ಟಿ"
+        "due": "ಬಾಕಿ ಪಟ್ಟಿ",
+        "schedules": "ನನ್ನ ವೇಳಾಪಟ್ಟಿ",
+        "allRequests": "ಎಲ್ಲಾ ವಿನಂತಿಗಳು",
+        "allDues": "ಎಲ್ಲಾ ಬಾಕಿಗಳು",
+        "logout": "ಲಾಗ್ಔಟ್",
+        "editProfile": "ಪ್ರೊಫೈಲ್ ಸುಧಾರಿಸಿ",
+        "yourActivity": "ಚಟುವಟಿಕೆ",
+        "adminActivity": "ನಿರ್ವಾಹಕ ಚಟುವಟಿಕೆ"
     },
     "BooksBrowsePage": {
         "title": "ಪುಸ್ತಕ ಶ್ರೇಣಿ",
@@ -25,6 +32,16 @@
         "borrowButton": "ವಿನಂತಿಸಿ",
         "notAvailable": "ಲಭ್ಯವಿಲ್ಲ",
         "onlyFewLeft": "ಹೆಚ್ಚು ಉಳಿದಿಲ್ಲ!"
+    },
+    "ProfessorsPage": {
+        "title": "ಪ್ರಾಧ್ಯಾಪಕರು",
+        "description": "ನಮ್ಮ ಉನ್ನತ-ಪ್ರೊಫೈಲ್ ಪ್ರಾಧ್ಯಾಪಕರೊಂದಿಗೆ ಸೆಷನ್‌ಗಾಗಿ ಸ್ಲಾಟ್ ಅನ್ನು ನಿಗದಿಪಡಿಸಿ.",
+        "searchPlaceholder": "ಪ್ರಾಧ್ಯಾಪಕರನ್ನು ಹುಡುಕಿ...",
+        "addButton": "ಹೊಸ ಪ್ರಾಧ್ಯಾಪಕರನ್ನು ಸೇರಿಸಿ"
+    },
+    "SchedulePage": {
+        "title": "ವೇಳಾಪಟ್ಟಿ",
+        "description": "ನಿಮ್ಮ ವೇಳಾಪಟ್ಟಿಯಲ್ಲಿನ ಎಲ್ಲಾ ಅಧಿವೇಶನ‌ಗಳನ್ನು ಒಂದೇ ಸ್ಥಳದಲ್ಲಿ ನೋಡಿ."
     },
     "BooksPage": {
         "title": "ಪುಸ್ತಕ ನಿರ್ವಹಣೆ",

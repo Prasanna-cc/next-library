@@ -91,6 +91,7 @@ const MemberForm = ({ member, handleBack }: MemberFormProps) => {
     try {
       const response = await registerMember(data);
       if (response) {
+        form.reset();
         toast({
           variant: "default",
           title: "Member added successfully",

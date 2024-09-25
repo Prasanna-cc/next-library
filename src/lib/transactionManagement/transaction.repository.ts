@@ -521,12 +521,8 @@ export class TransactionRepository
       // .offset(params.offset)
       // .limit(params.limit)
 
-      console.log("today: ", today);
-      console.log("twoDaysAfterToday: ", twoDaysAfterToday);
-
       const filteredTransactions = matchedTransactions.filter((transaction) => {
         const dueDate = new Date(transaction.dueDate);
-        console.log("dueDate: ", dueDate, " dbDueDate: ", transaction.dueDate);
         // dueDate <= today &&
         return dueDate <= twoDaysAfterToday;
       });

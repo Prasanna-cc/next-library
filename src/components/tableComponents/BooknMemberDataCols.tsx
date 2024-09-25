@@ -11,16 +11,18 @@ import { onDeleteMember } from "@/components/librarySpecificComponents/adminComp
 import { selectColumn } from "./SelectColumn";
 import { sortableColumnHeader } from "./SortableColumnHeader";
 import { translatedHeader, TranslatedLabel } from "./RowActions";
+import { IProfessor } from "@/lib/models/professor.model";
+import ProfessorCard from "../librarySpecificComponents/ProfessorCard";
 
 export const booksColumns: ColumnDef<Partial<IBook>>[] = [
   ...selectColumn<Partial<IBook>>(),
   {
     accessorKey: "title",
-    header: sortableColumnHeader("title", "books"),
+    header: sortableColumnHeader("title"),
   },
   {
     accessorKey: "availableNumOfCopies",
-    header: sortableColumnHeader("available", "books"),
+    header: sortableColumnHeader("available"),
     cell: ({ row }) => {
       const available = row.original.availableNumOfCopies;
       return (
@@ -40,15 +42,15 @@ export const booksColumns: ColumnDef<Partial<IBook>>[] = [
   },
   {
     accessorKey: "author",
-    header: sortableColumnHeader("author", "books"),
+    header: sortableColumnHeader("author"),
   },
   {
     accessorKey: "publisher",
-    header: sortableColumnHeader("publisher", "books"),
+    header: sortableColumnHeader("publisher"),
   },
   {
     accessorKey: "genre",
-    header: sortableColumnHeader("genre", "books"),
+    header: sortableColumnHeader("genre"),
   },
   {
     accessorKey: "isbnNo",
@@ -56,11 +58,11 @@ export const booksColumns: ColumnDef<Partial<IBook>>[] = [
   },
   {
     accessorKey: "numOfPages",
-    header: sortableColumnHeader("pages", "books"),
+    header: sortableColumnHeader("pages"),
   },
   {
     accessorKey: "totalNumOfCopies",
-    header: sortableColumnHeader("total", "books"),
+    header: sortableColumnHeader("total"),
   },
   {
     id: "actions",
@@ -81,7 +83,7 @@ export const booksColumns: ColumnDef<Partial<IBook>>[] = [
 
 export const memberColumns: ColumnDef<Partial<IMember>>[] = [
   ...selectColumn<Partial<IMember>>(),
-  { accessorKey: "name", header: sortableColumnHeader("name", "members") },
+  { accessorKey: "name", header: sortableColumnHeader("name") },
   {
     accessorKey: "role",
     header: translatedHeader({ table: "MembersTable", value: "role" }),
@@ -101,15 +103,15 @@ export const memberColumns: ColumnDef<Partial<IMember>>[] = [
       );
     },
   },
-  { accessorKey: "age", header: sortableColumnHeader("age", "members") },
-  { accessorKey: "email", header: sortableColumnHeader("email", "members") },
+  { accessorKey: "age", header: sortableColumnHeader("age") },
+  { accessorKey: "email", header: sortableColumnHeader("email") },
   {
     accessorKey: "phoneNumber",
-    header: sortableColumnHeader("phone", "members"),
+    header: sortableColumnHeader("phone"),
   },
   {
     accessorKey: "address",
-    header: sortableColumnHeader("address", "members"),
+    header: sortableColumnHeader("address"),
   },
   {
     id: "actions",
@@ -126,3 +128,43 @@ export const memberColumns: ColumnDef<Partial<IMember>>[] = [
     },
   },
 ];
+
+export const professorColumn = (handleEditClick?: () => void) => {
+  const professorColumns: ColumnDef<Partial<IProfessor>>[] = [
+    // ...selectColumn<Partial<IProfessor>>(),
+    {
+      id: "cards",
+      cell: ({ row }) => {
+        const professor = row.original;
+        return (
+          <ProfessorCard
+            editHandler={handleEditClick}
+            // name={professor.name || ""}
+            // department={professor.department || ""}
+            // email={professor.email || ""}
+            details={professor}
+          />
+        );
+      },
+    },
+  ];
+
+  return professorColumns;
+};
+
+// export const professorColumns: ColumnDef<Partial<IProfessor>>[] = [
+//   // ...selectColumn<Partial<IProfessor>>(),
+//   {
+//     id: "cards",
+//     cell: ({ row }) => {
+//       const professor = row.original;
+//       return (
+//         <ProfessorCard
+//           name={professor.name || ""}
+//           department={professor.department || ""}
+//           email={professor.email || ""}
+//         />
+//       );
+//     },
+//   },
+// ];

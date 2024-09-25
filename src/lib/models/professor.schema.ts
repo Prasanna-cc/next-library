@@ -12,12 +12,14 @@ export const ProfessorSchemaBase = z.object({
   shortBio: z
     .string()
     .max(255, "Short bio must be at most 255 characters long")
-    .nullable(),
+    .nullable()
+    .optional(),
   eventLink: z
     .string()
-    .url("Invalid URL format")
+    // .url("Invalid URL format")
     .max(255, "Event link must be at most 255 characters long")
-    .nullable(),
+    .nullable()
+    .optional(),
 });
 
 export const ProfessorSchema = ProfessorSchemaBase.extend({

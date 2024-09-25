@@ -142,7 +142,10 @@ export const allTransactionColumns: ColumnDef<Partial<ITransactionTable>>[] = [
     accessorKey: "bookTitle",
     header: sortableColumnHeader("bookTitle"),
   },
-  { accessorKey: "memberName", header: sortableColumnHeader("memberName") },
+  {
+    accessorKey: "memberName",
+    header: sortableColumnHeader("memberName"),
+  },
   {
     accessorKey: "requestStatus",
     header: sortableColumnHeader("requestStatus"),

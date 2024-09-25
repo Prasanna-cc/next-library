@@ -7,16 +7,23 @@
         "title": "Knowledg"
     },
     "MainNavMenu": {
-        "adminDashboardMenu": "Manage",
+        "menu": "Menu",
         "allTransactions": "All Transactions",
-        "userTransactions": "My Transactions",
         "books": "Books",
         "members": "Members"
     },
     "Profile": {
         "title": "Profile",
+        "account": "Account",
         "requests": "My Requests",
-        "due": "My Dues"
+        "due": "My Dues",
+        "schedules": "My Schedule",
+        "allRequests": "All Requests",
+        "allDues": "All Dues",
+        "logout": "Logout",
+        "editProfile": "Edit Profile",
+        "yourActivity": "Activity",
+        "adminActivity": "Admin Activity"
     },
     "BooksBrowsePage": {
         "title": "Book Shelf",
@@ -25,6 +32,16 @@
         "borrowButton": "Borrow",
         "notAvailable": "Not Available",
         "onlyFewLeft": "Only few left!"
+    },
+    "ProfessorsPage": {
+        "title": "Professors",
+        "description": "Schedule a slot for a session with our high-profile professors.",
+        "searchPlaceholder": "Search Professors...",
+        "addButton": "Add new Professor"
+    },
+    "SchedulePage": {
+        "title": "Schedule",
+        "description": "See all the sessions in your schedule in one place."
     },
     "BooksPage": {
         "title": "Book Management",

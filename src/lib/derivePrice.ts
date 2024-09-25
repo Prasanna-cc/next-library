@@ -47,7 +47,6 @@ export const derivePrice = async (price: number, timeZone: string) => {
   const format = await getFormatter();
   try {
     // const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    console.log(`User's Time Zone: ${timeZone}`);
 
     // If user is in the Indian subcontinent, return the price in INR
     if (isIndianSubcontinent(timeZone)) {

@@ -10,6 +10,9 @@ interface AppEnv {
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
   GOOGLE_REDIRECT_URI: string;
+  CALENDLY_TOKEN: string;
+  CALENDLY_URI: string;
+  CALENDLEY_ORGANIZATION_URI: string;
   // POSTGRES_URL: string;
   // POSTGRES_PRISMA_URL: string;
   // POSTGRES_URL_NO_SSL: string;
@@ -30,7 +33,10 @@ const getAppEnvs = (): AppEnv => {
         process.env.REFRESH_TOKEN_SECRET &&
         process.env.GOOGLE_CLIENT_ID &&
         process.env.GOOGLE_CLIENT_SECRET &&
-        process.env.GOOGLE_REDIRECT_URI
+        process.env.GOOGLE_REDIRECT_URI &&
+        process.env.CALENDLY_TOKEN &&
+        process.env.CALENDLY_URI &&
+        process.env.CALENDLEY_ORGANIZATION_URI
       )
       // process.env.POSTGRES_URL &&
       // process.env.POSTGRES_PRISMA_URL &&
@@ -52,6 +58,9 @@ const getAppEnvs = (): AppEnv => {
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     GOOGLE_REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI,
+    CALENDLY_TOKEN: process.env.CALENDLY_TOKEN,
+    CALENDLY_URI: process.env.CALENDLY_URI,
+    CALENDLEY_ORGANIZATION_URI: process.env.CALENDLEY_ORGANIZATION_URI,
     // POSTGRES_URL: process.env.POSTGRES_URL,
     // POSTGRES_PRISMA_URL: process.env.POSTGRES_PRISMA_URL,
     // POSTGRES_URL_NO_SSL: process.env.POSTGRES_URL_NO_SSL,

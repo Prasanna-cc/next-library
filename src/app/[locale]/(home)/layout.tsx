@@ -18,6 +18,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { findMember } from "@/lib/actions";
 import { IMember } from "@/lib/models/member.model";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { LoginDialog } from "@/components/LoginForm";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -61,7 +64,17 @@ export default async function RootLayout({
           <NextIntlClientProvider messages={messages}>
             <Navbar>
               <LocaleSelector />
-              <MainNavMenu userDetails={userDetails} />
+              {/* <Suspense
+                fallback={
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="w-32 h-10 rounded-full" />
+                    <Skeleton className="w-32 h-10 rounded-full" />
+                    <Skeleton className="w-32 h-10 rounded-full" />
+                  </div>
+                }
+              > */}
+              {<MainNavMenu userDetails={userDetails} />}
+              {/* </Suspense> */}
             </Navbar>
             <EdgeStoreProvider>
               <main>{children}</main>

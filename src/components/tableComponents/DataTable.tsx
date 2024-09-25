@@ -39,6 +39,7 @@ import { IMember } from "@/lib/models/member.schema";
 import { IBook } from "@/lib/models/book.model";
 import { ITransactionTable } from "@/lib/models/transaction.model";
 import { useTranslations } from "next-intl";
+import { IProfessor } from "@/lib/models/professor.model";
 
 interface DataTableProps<T extends AllowedTypes> {
   data: T[];
@@ -46,10 +47,11 @@ interface DataTableProps<T extends AllowedTypes> {
   onRowClick?: (data: T) => void;
   currentPage: number;
   totalPages: number;
-  defaultVisibleColumns: string[];
+  cardMode?: boolean;
+  defaultVisibleColumns?: string[];
 }
 
-type AllowedTypes = IBook | IMember | ITransactionTable;
+type AllowedTypes = IBook | IMember | ITransactionTable | IProfessor;
 
 function isTransactionTable(data: AllowedTypes[]): data is ITransactionTable[] {
   return data.every(
@@ -62,6 +64,7 @@ export const DataTable = <T extends AllowedTypes>({
   columns,
   onRowClick,
   currentPage,
+  cardMode,
   totalPages,
   defaultVisibleColumns,
 }: DataTableProps<T>) => {
@@ -72,13 +75,18 @@ export const DataTable = <T extends AllowedTypes>({
       const initialVisibility: VisibilityState = {};
       columns.forEach((column) => {
         if ("accessorKey" in column) {
-          initialVisibility[column.accessorKey as string] =
-            defaultVisibleColumns.includes(column.accessorKey as string);
+          if (!defaultVisibleColumns)
+            initialVisibility[column.accessorKey as string] = true;
+          else
+            initialVisibility[column.accessorKey as string] =
+              defaultVisibleColumns.includes(column.accessorKey as string);
         } else if (column.id) {
           initialVisibility["select"] = true;
-          initialVisibility[column.id] = defaultVisibleColumns.includes(
-            column.id
-          );
+          if (!defaultVisibleColumns) initialVisibility[column.id] = true;
+          else
+            initialVisibility[column.id] = defaultVisibleColumns.includes(
+              column.id
+            );
         }
       });
       return initialVisibility;
@@ -119,7 +127,7 @@ export const DataTable = <T extends AllowedTypes>({
   return (
     <div className="w-full flex flex-col">
       <div className="flex justify-end gap-1 items-center bg-slate-100 pr-2">
-        <div>
+        {!cardMode && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -168,7 +176,7 @@ export const DataTable = <T extends AllowedTypes>({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
+        )}
         <div className="flex items-center gap-1">
           <span className="text-xs text-slate-500">
             {t("Pagination", { current: currentPage, total: totalPages })}
@@ -208,20 +216,22 @@ export const DataTable = <T extends AllowedTypes>({
         </div>
       </div>
       <Table>
-        <TableHeader className="bg-slate-100">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
+        {!cardMode && (
+          <TableHeader className="bg-slate-100">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+        )}
         <TableBody>
           {table.getRowModel().rows.map((row) => (
             <TableRow

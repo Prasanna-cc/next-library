@@ -1,12 +1,13 @@
 import { booksColumns } from "@/components/tableComponents/BooknMemberDataCols";
 import { searchBooks } from "@/lib/actions";
-import { TableWithPreview } from "../TableWithPreview";
+import { SplitViews } from "@/app/[locale]/(home)/dashboard/SplitViews";
 import CustomDialog from "@/components/CustomDialog";
 import BookForm from "@/components/librarySpecificComponents/adminComponents/BookForm";
 import { Plus } from "lucide-react";
 import Search from "@/components/Search";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import ToolBar from "@/app/[locale]/(home)/ToolBar";
+import { BookSplitViews } from "./BookSplitViews";
 
 export default async function BookManagementPage({
   searchParams,
@@ -66,17 +67,10 @@ export default async function BookManagementPage({
           <BookForm />
         </CustomDialog> */}
 
-        <TableWithPreview
+        <BookSplitViews
           currentPage={page}
           totalPages={totalPages}
           data={books}
-          columns={booksColumns}
-          defaultTableColumns={[
-            "select",
-            "title",
-            "availableNumOfCopies",
-            "actions",
-          ]}
         />
       </div>
     </div>

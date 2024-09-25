@@ -50,13 +50,14 @@ export const Members = pgTable("members", {
   status: statusEnum("status").notNull().default("verified"),
 });
 
-// MemberSessions table definition
-// export const MemberSessions = pgTable("memberSessions", {
-//   id: integer("id")
-//     .notNull()
-//     .references(() => Members.id),
-//   refreshToken: text("refreshToken").notNull().unique(),
-// });
+export const Professors = pgTable("Professors", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").unique().notNull(),
+  department: text("department").notNull(),
+  shortBio: text("shortBio"),
+  eventLink: text("eventLink"),
+});
 
 // Transactions table definition
 export const Transactions = pgTable("transactions", {

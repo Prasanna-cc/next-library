@@ -51,10 +51,6 @@ export class MemberRepository
           ...oldMember,
           ...data,
         };
-        console.log("data: ", data);
-        console.log("oldMember: ", oldMember);
-        console.log("updatedMember: ", updatedMember);
-
         const validatedMember = MemberBaseSchema.parse(updatedMember);
         const [result] = await db
           .update(Members)

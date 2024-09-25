@@ -25,16 +25,19 @@ export function DashboardNavMenu() {
   const t = useTranslations("MainNavMenu");
 
   return (
-    <>
+    <div className="flex gap-1">
+      <Link href={"/dashboard/professors"}>
+        <Button variant={"outline"} className="rounded-full">
+          Professors
+        </Button>
+      </Link>
       {session?.user.role === "admin" ? (
         <Menubar className="border-none relative z-10 flex w-screen max-w-max items-center justify-center">
           <MenubarMenu>
             <MenubarTrigger>
               <div className="flex items-center gap-1">
                 <MenuSquareIcon className="md:h-4 md:w-4" />
-                <span className="hidden md:inline-flex">
-                  {t("adminDashboardMenu")}
-                </span>
+                <span className="hidden md:inline-flex">{t("menu")}</span>
               </div>
             </MenubarTrigger>
             <MenubarContent>
@@ -44,10 +47,10 @@ export function DashboardNavMenu() {
                     title={t("allTransactions")}
                     href="/dashboard/admin/allTransactions"
                   />
-                  <ListItem
+                  {/* <ListItem
                     title={t("userTransactions")}
                     href="/dashboard/transactions"
-                  />
+                  /> */}
                   <ListItem title={t("books")} href="/dashboard/admin/books" />
                   <ListItem
                     title={t("members")}
@@ -59,11 +62,12 @@ export function DashboardNavMenu() {
           </MenubarMenu>
         </Menubar>
       ) : (
-        <Link title="My Transactions" href="/dashboard/transactions">
-          <Button variant="ghost">{t("userTransactions")}</Button>
-        </Link>
+        // <Link title="My Transactions" href="/dashboard/transactions">
+        //   <Button variant="ghost">{t("userTransactions")}</Button>
+        // </Link>
+        ""
       )}
-    </>
+    </div>
   );
 }
 

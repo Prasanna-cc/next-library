@@ -8,7 +8,7 @@ type PriceTagProps = {
   price: number;
 };
 
-const PriceTag: React.FC<PriceTagProps> = React.memo(async ({ price }) => {
+const PriceTag: React.FC<PriceTagProps> = React.memo(({ price }) => {
   const [formattedPrice, setFormattedPrice] = useState<
     string | React.ReactNode
   >(<PriceSkeleton />);

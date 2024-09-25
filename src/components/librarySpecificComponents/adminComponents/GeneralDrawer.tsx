@@ -4,7 +4,7 @@ import React, { useState, useEffect, ReactElement } from "react";
 import { Drawer, DrawerTrigger, DrawerContent } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { CustomCard } from "@/components/librarySpecificComponents/adminComponents/GeneralCard";
-import { AllowedDataTypes } from "@/app/[locale]/(home)/dashboard/admin/(libraryManagement)/TableWithPreview";
+import { AllowedDataTypes } from "@/app/[locale]/(home)/dashboard/SplitViews";
 
 interface CustomDrawerProps<T extends AllowedDataTypes> {
   data: T | null;

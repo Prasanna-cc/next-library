@@ -19,6 +19,7 @@ interface CustomDialogProps {
   onOpenChange?: (open: boolean) => void;
   children: React.ReactNode;
   triggerButtonClass?: string;
+  triggerButtonSize?: "default" | "icon" | "lg" | "sm";
   triggerButtonVariant?:
     | "default"
     | "destructive"
@@ -33,6 +34,7 @@ const CustomDialog: React.FC<CustomDialogProps> = ({
   title,
   description,
   children,
+  triggerButtonSize = "default",
   openOnLoad,
   onOpenChange,
   triggerButtonClass,
@@ -45,7 +47,11 @@ const CustomDialog: React.FC<CustomDialogProps> = ({
         ""
       ) : (
         <DialogTrigger asChild>
-          <Button variant={triggerButtonVariant} className={triggerButtonClass}>
+          <Button
+            size={triggerButtonSize}
+            variant={triggerButtonVariant}
+            className={triggerButtonClass}
+          >
             {triggerText}
           </Button>
         </DialogTrigger>

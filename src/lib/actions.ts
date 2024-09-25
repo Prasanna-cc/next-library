@@ -10,9 +10,11 @@ import { ITransactionBase } from "./models/transaction.model";
 import { TransactionRepository } from "./transactionManagement/transaction.repository";
 import { AppError } from "./core/appError";
 import { IBookBase } from "./models/book.model";
+import { ProfessorRepository } from "./memberManagement/professor.repository";
+import { IProfessorBase } from "./models/professor.model";
 
 const memberRepo = new MemberRepository();
-// const memberSessionRepo = new MemberSessRepository(dbManager);
+const professorRepo = new ProfessorRepository();
 const bookRepo = new BookRepository();
 const transactionRepo = new TransactionRepository();
 
@@ -121,6 +123,42 @@ export const findMember = (emailOrId: string | number) =>
 export const getMembers = async (pageRequest: IPageRequest) => {
   try {
     return memberRepo.list(pageRequest);
+  } catch (err) {
+    if (err instanceof Error) throw err;
+  }
+};
+
+export const getProfessors = async (pageRequest: IPageRequest) => {
+  try {
+    return professorRepo.list(pageRequest);
+  } catch (err) {
+    if (err instanceof Error) throw err;
+  }
+};
+
+export const registerProfessor = async (newProfessor: IProfessorBase) => {
+  try {
+    const result = await professorRepo.create(newProfessor);
+    return "User registered successfully";
+  } catch (err) {
+    if (err instanceof Error) throw err;
+  }
+};
+
+export const updateProfessor = async (
+  professorId: number,
+  data: Partial<IProfessorBase>
+) => {
+  try {
+    return professorRepo.update(professorId, data);
+  } catch (err) {
+    if (err instanceof Error) throw err;
+  }
+};
+
+export const deleteProfessor = async (MemberId: number) => {
+  try {
+    return professorRepo.delete(MemberId);
   } catch (err) {
     if (err instanceof Error) throw err;
   }

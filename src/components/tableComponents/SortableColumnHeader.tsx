@@ -31,24 +31,13 @@ const SortButton = ({
   );
 };
 
-export const sortableColumnHeader = (
-  headerName: string,
-  table?: "books" | "members"
-) => {
+export const sortableColumnHeader = (headerName: string) => {
   const SortableHeader = ({
     column,
   }: {
     column: Column<Partial<IBook>, unknown>;
   }) => {
-    const t = useTranslations(
-      `Tables.${
-        table === "books"
-          ? "BooksTable"
-          : table === "members"
-          ? "MembersTable"
-          : "TransactionTable.Headers"
-      }`
-    );
+    const t = useTranslations("Tables.Headers");
     return <SortButton column={column} headerName={t(headerName)} />;
   };
 

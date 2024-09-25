@@ -31,7 +31,7 @@ export class ProfessorRepository
       if (err instanceof Error) {
         if (err.message.includes("Duplicate entry")) {
           if (err.message.includes("email")) {
-            throw new AppError("User with this email already exists", {
+            throw new AppError("Professor with this email already exists", {
               duplicate: "email",
             });
           }
@@ -75,8 +75,8 @@ export class ProfessorRepository
       const deletedProfessor = await this.getById(professorId);
       if (deletedProfessor) {
         const [result] = await db
-          .delete(Members)
-          .where(eq(Members.id, professorId));
+          .delete(Professors)
+          .where(eq(Professors.id, professorId));
         if (result.affectedRows && result.affectedRows > 0) {
           return deletedProfessor;
         } else

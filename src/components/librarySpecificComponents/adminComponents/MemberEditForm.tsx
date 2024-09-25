@@ -117,13 +117,13 @@ const MemberEditForm = ({
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="password">Change Password</TabsTrigger>
         </TabsList>
-        <Button variant="ghost" onClick={handleBack}>
-          {!forProfile ? (
+        {!forProfile ? (
+          <Button variant="ghost" onClick={handleBack}>
             <X className="w-4 h-4" />
-          ) : (
-            <ArrowLeft className="w-4 h-4" />
-          )}
-        </Button>
+          </Button>
+        ) : (
+          ""
+        )}
       </div>
 
       <TabsContent value="details">
@@ -153,27 +153,29 @@ const MemberEditForm = ({
               </FormItem>
             ))}
 
-            <FormItem>
-              <FormLabel>Role</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  value={detailsForm.watch("role") || "user"}
-                  onValueChange={(value: "user" | "admin") =>
-                    detailsForm.setValue("role", value)
-                  }
-                  className="flex gap-4"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="user" id="user" />
-                    <FormLabel htmlFor="user">User</FormLabel>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="admin" id="admin" />
-                    <FormLabel htmlFor="admin">Admin</FormLabel>
-                  </div>
-                </RadioGroup>
-              </FormControl>
-            </FormItem>
+            {!forProfile && (
+              <FormItem>
+                <FormLabel>Role</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    value={detailsForm.watch("role") || "user"}
+                    onValueChange={(value: "user" | "admin") =>
+                      detailsForm.setValue("role", value)
+                    }
+                    className="flex gap-4"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="user" id="user" />
+                      <FormLabel htmlFor="user">User</FormLabel>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="admin" id="admin" />
+                      <FormLabel htmlFor="admin">Admin</FormLabel>
+                    </div>
+                  </RadioGroup>
+                </FormControl>
+              </FormItem>
+            )}
 
             <div className="flex justify-end gap-2">
               <Button type="submit">Save Changes</Button>
