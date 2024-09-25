@@ -6,7 +6,7 @@ import {
   IBookBase,
 } from "@/lib/models/book.schema";
 import { IPageRequest, IPagedResponse } from "@/lib/core/pagination";
-import { count, eq, ilike, like, or, SQL } from "drizzle-orm";
+import { count, eq, ilike, like, or, sql, SQL } from "drizzle-orm";
 import { db } from "@/lib/database/drizzle/db";
 import { Books } from "@/lib/database/drizzle/drizzleSchema";
 import { AppError } from "../core/appError";
@@ -106,15 +106,22 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
   async list(params: IPageRequest): Promise<IPagedResponse<IBook> | undefined> {
     let searchWhereClause: SQL | undefined;
     if (params.search) {
-      const search = `%${params.search.toLowerCase()}%`;
-      searchWhereClause = or(
-        ilike(Books.id, search),
-        ilike(Books.title, search),
-        ilike(Books.isbnNo, search),
-        ilike(Books.genre, search),
-        ilike(Books.author, search),
-        ilike(Books.publisher, search)
-      );
+      console.log("params.search: ", params.search);
+
+      const search = `${params.search}`;
+      searchWhereClause = sql`${Books.title} ILIKE ${`%${params.search}%`}
+      OR ${Books.author} ILIKE ${`%${params.search}%`}
+      OR ${Books.publisher} ILIKE ${`%${params.search}%`}
+      OR ${Books.genre} ILIKE ${`%${params.search}%`}
+      OR ${Books.isbnNo} ILIKE ${`%${params.search}%`}`;
+      // or(
+      //   ilike(Books.id, search),
+      //   ilike(Books.title, search),
+      //   ilike(Books.isbnNo, search),
+      //   ilike(Books.genre, search),
+      //   ilike(Books.author, search),
+      //   ilike(Books.publisher, search)
+      // );
     }
 
     // Execution of queries:
@@ -131,6 +138,7 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
         matchedBooks = await db
           .select()
           .from(Books)
+          .orderBy(Books.id)
           .offset(params.offset)
           .limit(params.limit);
       }

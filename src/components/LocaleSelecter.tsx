@@ -2,16 +2,16 @@
 
 import { useTransition } from "react";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-import { Switch } from "./ui/switch";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { usePathname } from "@/i18n/routing";
+import { Languages } from "lucide-react";
 
 interface LocaleSwitcherProps extends React.ComponentPropsWithoutRef<"div"> {}
 
@@ -38,24 +38,31 @@ export const LocaleSelector = ({ ...delegated }: LocaleSwitcherProps) => {
 
   return (
     <div className="w-full flex items-center" {...delegated}>
-      <Select
-        defaultValue={localActive}
-        onValueChange={handleSelection}
-        disabled={isPending}
-      >
-        <SelectTrigger className="w-full min-w-[110px] rounded-full bg-slate-100 text-slate-500 font-medium">
-          <SelectValue placeholder="Language" />
-        </SelectTrigger>
-        <SelectContent>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            className="w-full px-2 rounded-full bg-slate-100 text-slate-500 font-medium"
+            disabled={isPending}
+          >
+            <span className="flex gap-1 items-center">
+              <Languages className="md:h-4 w-fit md:w-4" />
+              <span className="hidden md:inline-flex">Language</span>
+            </span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-[160px]">
           {languageOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              <div className="flex items-center gap-2">
-                <span>{option.label}</span>
-              </div>
-            </SelectItem>
+            <DropdownMenuItem
+              key={option.value}
+              onClick={() => handleSelection(option.value)}
+              className="flex items-center gap-2"
+            >
+              <span>{option.label}</span>
+            </DropdownMenuItem>
           ))}
-        </SelectContent>
-      </Select>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };

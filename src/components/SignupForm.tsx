@@ -52,7 +52,7 @@ export const SignupForm = () => {
       await signIn("credentials", {
         email: data.email,
         password: data.password,
-        redirect: false,
+        redirect: true,
       });
     } catch (err) {
       if (

@@ -21,6 +21,9 @@ interface AppEnv {
   POSTGRES_HOST: string;
   POSTGRES_PASSWORD: string;
   POSTGRES_DATABASE: string;
+  NEXTAUTH_URL: string;
+  NEXTAUTH_URL_INTERNAL: string;
+  NEXTAUTH_SECRET: string;
 }
 
 // Access and validate environment variables
@@ -43,7 +46,10 @@ const getAppEnvs = (): AppEnv => {
       process.env.POSTGRES_USER &&
       process.env.POSTGRES_HOST &&
       process.env.POSTGRES_PASSWORD &&
-      process.env.POSTGRES_DATABASE
+      process.env.POSTGRES_DATABASE &&
+      process.env.NEXTAUTH_URL &&
+      process.env.NEXTAUTH_URL_INTERNAL &&
+      process.env.NEXTAUTH_SECRET
     )
   ) {
     throw new Error("Required environment variables are not defined");
@@ -67,6 +73,9 @@ const getAppEnvs = (): AppEnv => {
     POSTGRES_HOST: process.env.POSTGRES_HOST,
     POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
     POSTGRES_DATABASE: process.env.POSTGRES_DATABASE,
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    NEXTAUTH_URL_INTERNAL: process.env.NEXTAUTH_URL_INTERNAL,
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   };
 };
 

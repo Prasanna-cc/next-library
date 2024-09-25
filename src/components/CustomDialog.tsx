@@ -56,7 +56,7 @@ const CustomDialog: React.FC<CustomDialogProps> = ({
           </Button>
         </DialogTrigger>
       )}
-      <DialogContent className="max-h-96 overflow-auto no-scrollbar max-w-[425px]">
+      <DialogContent className="max-h-96 w-full overflow-auto no-scrollbar max-w-[425px]">
         {(title || description) && (
           <DialogHeader>
             {title && <DialogTitle>{title}</DialogTitle>}

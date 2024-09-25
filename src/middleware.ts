@@ -1,8 +1,8 @@
 import { withAuth } from "next-auth/middleware";
 import createMiddleware from "next-intl/middleware";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { routing } from "./i18n/routing";
-import { JWT } from "next-auth/jwt";
+import { getToken, JWT } from "next-auth/jwt";
 
 const publicPages = ["/", "/signin", "/signup"];
 
@@ -26,7 +26,15 @@ const authMiddleware = withAuth(
   },
   {
     callbacks: {
-      authorized: ({ token }) => token != null,
+      authorized: async (req) => {
+        const token = await getToken({
+          req: req.req,
+          secret: process.env.NEXTAUTH_SECRET,
+        });
+        console.log("req token in middleware: ", req.token);
+        console.log("get token in middleware: ", token);
+        return token != null;
+      },
     },
     pages: {
       signIn: "/signin",

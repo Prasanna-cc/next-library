@@ -22,9 +22,9 @@ export class MemberRepository
     try {
       const [result] = await db
         .insert(Members)
-        .values(validatedData as IMember)
+        .values(newUser as IMember)
         .returning();
-      if (result.id) {
+      if (result) {
         // const createdMember = await this.getById(result.id);
         return result;
       } else throw new Error("There was a problem while creating the member");

@@ -12,6 +12,9 @@ export const authOptions: AuthOptions = {
   pages: {
     signIn: "/signin",
   },
+  session: {
+    strategy: "jwt",
+  },
   providers: [
     GoogleProvider({
       clientId: AppEnvs.GOOGLE_CLIENT_ID,
@@ -88,6 +91,8 @@ export const authOptions: AuthOptions = {
         token.id = account.user.id;
         token.role = account.user.role;
       }
+      console.log("token in jwt: ", token);
+
       return token;
     },
 

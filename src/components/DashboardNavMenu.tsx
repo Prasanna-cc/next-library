@@ -3,7 +3,7 @@
 import * as React from "react";
 // import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { MenuSquareIcon } from "lucide-react";
+import { MenuSquareIcon, Users2 } from "lucide-react";
 import {
   Menubar,
   MenubarMenu,
@@ -27,8 +27,11 @@ export function DashboardNavMenu() {
   return (
     <div className="flex gap-1">
       <Link href={"/dashboard/professors"}>
-        <Button variant={"outline"} className="rounded-full">
-          Professors
+        <Button variant={"outline"} className="rounded-full px-2">
+          <span className="flex gap-1 items-center">
+            <Users2 className="md:h-4 w-fit md:w-4" />{" "}
+            <span className="hidden md:inline-flex">Professors</span>
+          </span>
         </Button>
       </Link>
       {session?.user.role === "admin" ? (

@@ -152,10 +152,10 @@ const BookCard = ({ book }: { book: IBook }) => {
             ) : (
               ""
             )}
-            {showLogin && <LoginDialog openOnLoad />}
           </CardFooter>
         </Card>
       </BookDrawer>
+      {showLogin && <LoginDialog openOnLoad />}
       {showBorrowDialog && (
         <CustomDialog
           openOnLoad
