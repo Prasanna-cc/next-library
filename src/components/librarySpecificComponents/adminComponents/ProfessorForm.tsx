@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form";
 import {
   deleteProfessor,
+  inviteProfessor,
   registerProfessor,
   updateProfessor,
 } from "@/lib/actions";
@@ -55,10 +56,15 @@ const ProfessorForm = ({ handleBack, professorData }: ProfessorFormProps) => {
       const professorDetails: IProfessorBase = {
         ...data,
         shortBio: data.shortBio || null,
-        eventLink: data.eventLink || null,
+        eventLink:
+          (data.eventLink?.includes("https://calendly.com/") &&
+            data.eventLink) ||
+          null,
       };
-      const response = await registerProfessor(professorDetails);
-      if (response) {
+      const response = await inviteProfessor(professorDetails);
+      console.log("response: ", response);
+
+      if (!response?.message.includes("Failed")) {
         toast({
           variant: "default",
           title: "Professor added successfully",

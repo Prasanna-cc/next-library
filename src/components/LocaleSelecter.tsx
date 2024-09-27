@@ -42,7 +42,7 @@ export const LocaleSelector = ({ ...delegated }: LocaleSwitcherProps) => {
         <DropdownMenuTrigger asChild>
           <Button
             variant="outline"
-            className="w-full px-2 rounded-full bg-slate-100 text-slate-500 font-medium"
+            className="w-full px-2 rounded-full  text-slate-500 font-medium"
             disabled={isPending}
           >
             <span className="flex gap-1 items-center">

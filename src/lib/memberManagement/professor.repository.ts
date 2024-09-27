@@ -100,6 +100,21 @@ export class ProfessorRepository
       if (err instanceof Error) throw new Error(err.message);
     }
   }
+
+  async getByEmail(email: string): Promise<IProfessor | undefined> {
+    // Execution of queries:
+    try {
+      const [selectedProfessor] = await db
+        .select()
+        .from(Professors)
+        .where(eq(Professors.email, email));
+      if (!selectedProfessor) throw new Error("Professor not found");
+      return selectedProfessor;
+    } catch (err) {
+      if (err instanceof Error) throw new Error(err.message);
+    }
+  }
+
   async list(
     params: IPageRequest
   ): Promise<IPagedResponse<IProfessor> | undefined> {

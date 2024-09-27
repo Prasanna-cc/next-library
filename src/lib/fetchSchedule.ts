@@ -44,7 +44,38 @@ export async function getScheduledEvents(userEmail: string) {
     }
 
     const data = await response.json();
-    return data.collection; // Return an array of scheduled events
+    const events = data.collection;
+
+    const eventsDetails = await Promise.all(
+      events.map(async (event: any) => {
+        const meetLink = event.location?.join_url || "No Meet link";
+        const eventUUID = event.uri.split("/").pop();
+        const invitees = await getInviteeDetails(eventUUID);
+        const organizers = event.event_memberships.map((membership: any) => ({
+          name: membership.user_name,
+          email: membership.user_email,
+        }));
+        const currentInvitee = invitees.filter(
+          (invitee: any) => invitee.email === userEmail
+        );
+        return {
+          name: event.name,
+          professor: event.event_memberships[0].user_name,
+          status: event.status,
+          start_time: event.start_time,
+          end_time: event.end_time,
+          meetLink: meetLink,
+          cancelLink: currentInvitee[0].cancel_url,
+          rescheduleLink: currentInvitee[0].reschedule_url,
+          organizers,
+          // invitees: invitees.map((invitee: any) => ({
+          //   name: invitee.name,
+          //   email: invitee.email,
+          // })),
+        };
+      })
+    );
+    return eventsDetails;
   } catch (error) {
     throw error;
   }

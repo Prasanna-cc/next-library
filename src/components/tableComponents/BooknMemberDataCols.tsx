@@ -129,10 +129,7 @@ export const memberColumns: ColumnDef<Partial<IMember>>[] = [
   },
 ];
 
-export const professorColumn = (
-  handleEditClick?: () => void,
-  render?: "mobileView"
-) => {
+export const professorColumn = (viewer?: "admin", render?: "mobileView") => {
   const professorColumns: ColumnDef<Partial<IProfessor>>[] = [
     // ...selectColumn<Partial<IProfessor>>(),
     {
@@ -141,7 +138,7 @@ export const professorColumn = (
         const professor = row.original;
         return (
           <ProfessorCard
-            editHandler={handleEditClick}
+            isAdmin={viewer === "admin"}
             isMobileView={render === "mobileView"}
             // name={professor.name || ""}
             // department={professor.department || ""}

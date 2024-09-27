@@ -41,10 +41,7 @@ const DeleteConfirmationDialog = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Are you sure?</DialogTitle>
-          <DialogDescription>
-            This action cannot be undone. This will permanently delete the book
-            record.
-          </DialogDescription>
+          <DialogDescription>This action cannot be undone.</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           {/* <Button variant="outline">Cancel</Button> */}

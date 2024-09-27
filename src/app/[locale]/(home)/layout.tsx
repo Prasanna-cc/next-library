@@ -64,20 +64,10 @@ export default async function RootLayout({
           <NextIntlClientProvider messages={messages}>
             <Navbar>
               <LocaleSelector />
-              {/* <Suspense
-                fallback={
-                  <div className="flex items-center gap-2">
-                    <Skeleton className="w-32 h-10 rounded-full" />
-                    <Skeleton className="w-32 h-10 rounded-full" />
-                    <Skeleton className="w-32 h-10 rounded-full" />
-                  </div>
-                }
-              > */}
               {<MainNavMenu userDetails={userDetails} />}
-              {/* </Suspense> */}
             </Navbar>
             <EdgeStoreProvider>
-              <main>{children}</main>
+              <main id="root">{children}</main>
             </EdgeStoreProvider>
             <Toaster />
           </NextIntlClientProvider>

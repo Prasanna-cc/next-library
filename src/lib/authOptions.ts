@@ -91,7 +91,6 @@ export const authOptions: AuthOptions = {
         token.id = account.user.id;
         token.role = account.user.role;
       }
-      console.log("token in jwt: ", token);
 
       return token;
     },

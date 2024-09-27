@@ -26,15 +26,7 @@ const authMiddleware = withAuth(
   },
   {
     callbacks: {
-      authorized: async (req) => {
-        const token = await getToken({
-          req: req.req,
-          secret: process.env.NEXTAUTH_SECRET,
-        });
-        console.log("req token in middleware: ", req.token);
-        console.log("get token in middleware: ", token);
-        return token != null;
-      },
+      authorized: async (token) => token != null,
     },
     pages: {
       signIn: "/signin",

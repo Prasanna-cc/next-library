@@ -11,7 +11,10 @@ import { TransactionRepository } from "./transactionManagement/transaction.repos
 import { AppError } from "./core/appError";
 import { IBookBase } from "./models/book.model";
 import { ProfessorRepository } from "./memberManagement/professor.repository";
-import { IProfessorBase } from "./models/professor.model";
+import { IProfessor, IProfessorBase } from "./models/professor.model";
+import { revalidatePath } from "next/cache";
+import { AppEnvs } from "./core/read-env";
+import { z } from "zod";
 
 const memberRepo = new MemberRepository();
 const professorRepo = new ProfessorRepository();
@@ -276,3 +279,127 @@ export const getDueList = async (pageRequest: ITransactionPageRequest) => {
     if (err instanceof Error) throw err;
   }
 };
+
+export async function inviteProfessor(
+  // prevState: string | undefined,
+  data: IProfessorBase
+) {
+  try {
+    // const email = formData.get("email") as string;
+    // const data: Omit<IProfessor, "id"> = {
+    //   name: formData.get("name") as string,
+    //   email: formData.get("email") as string,
+    //   department: formData.get("department") as string,
+    //   shortBio: formData.get("shortBio") as string,
+    //   calendlyLink: null,
+    // };
+
+    const orgUri: string = AppEnvs.CALENDLEY_ORGANIZATION_URI;
+    console.log("orgUri: ", orgUri);
+    const uuid = orgUri.split("/").pop()?.trim();
+    console.log("uuid: ", uuid);
+    let invitationResult;
+    if (!data.eventLink)
+      invitationResult = await fetch(
+        `https://api.calendly.com/organizations/${uuid}/invitations`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${AppEnvs.CALENDLY_TOKEN}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: data.email,
+          }),
+        }
+      );
+
+    if (invitationResult?.ok || data.eventLink) {
+      const createdMember = await professorRepo.create(data);
+      if (!createdMember) {
+        return { message: "Failed in db to create professor." };
+      }
+      return { message: "Professor created successfully!" };
+    }
+    console.log("invitationResult: ", invitationResult);
+
+    return { message: "Failed to invite professor." };
+  } catch (err) {
+    if (err instanceof Error) {
+      console.log(err.message);
+      return { message: err.message || "Invalid input" };
+    }
+    // return { message: (err as Error).message };
+  }
+}
+
+export async function refreshCalendlyLink(email: string) {
+  try {
+    const orgUri: string = AppEnvs.CALENDLEY_ORGANIZATION_URI;
+    const uuid = orgUri.split("/").pop();
+
+    const invitationsResponse = await fetch(
+      `https://api.calendly.com/organizations/${uuid}/invitations?email=${encodeURIComponent(
+        email
+      )}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${AppEnvs.CALENDLY_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!invitationsResponse.ok) {
+      throw new Error(
+        `Error fetching invitations: ${invitationsResponse.statusText}`
+      );
+    }
+
+    const invitationsData = await invitationsResponse.json();
+    const invitation = invitationsData.collection[0];
+
+    if (invitation && invitation.status === "accepted") {
+      const userResponse = await fetch(invitation.user, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${AppEnvs.CALENDLY_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!userResponse.ok) {
+        throw new Error(`Error fetching user: ${userResponse.statusText}`);
+      }
+
+      const userData = await userResponse.json();
+      const calendlyLink = userData.resource.scheduling_url;
+
+      const professor = await professorRepo.getByEmail(email);
+
+      if (professor) {
+        await professorRepo.update(professor.id, {
+          ...professor,
+          eventLink: calendlyLink,
+        });
+        return {
+          success: true,
+          message: "Calendly link updated successfully.",
+        };
+      } else {
+        throw new Error("Professor not found in the database.");
+      }
+    } else {
+      return {
+        success: false,
+        message: "Invitation not accepted or not found.",
+      };
+    }
+  } catch (error) {
+    console.error("Error in checkInvitationAndUpdateCalendlyLink:", error);
+    throw error;
+  } finally {
+    revalidatePath("/admin/professors");
+  }
+}

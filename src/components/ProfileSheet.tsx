@@ -72,7 +72,7 @@ export const ProfileSheet = ({ userDetails }: ProfileSheetProps) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" className="w-10 h-10 rounded-full p-0">
+        <Button variant="ghost" className="w-10 h-10 rounded-full pt-4">
           <Avatar>
             {session?.user?.image ? (
               <Image

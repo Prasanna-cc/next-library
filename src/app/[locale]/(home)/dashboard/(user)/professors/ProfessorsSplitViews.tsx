@@ -32,12 +32,7 @@ export const ProfessorSplitViews = ({
     setIsEdit(false);
   };
 
-  const handleEditClick =
-    session?.user.role === "admin"
-      ? () => {
-          setIsEdit(true);
-        }
-      : undefined;
+  const isAdmin = session?.user.role === "admin" ? "admin" : undefined;
 
   const renderSecondView = () => {
     if (!selectedProfessor) {
@@ -99,7 +94,7 @@ export const ProfessorSplitViews = ({
             totalPages={totalPages}
             data={data}
             onRowClick={handleRowClick}
-            columns={professorColumn(handleEditClick)}
+            columns={professorColumn(isAdmin)}
             cardMode
           />
         </Suspense>
@@ -112,7 +107,7 @@ export const ProfessorSplitViews = ({
             totalPages={totalPages}
             data={data}
             onRowClick={handleRowClick}
-            columns={professorColumn(handleEditClick, "mobileView")}
+            columns={professorColumn(isAdmin, "mobileView")}
             cardMode
           />
         </Suspense>

@@ -10,7 +10,11 @@
         "menu": "Menu",
         "allTransactions": "All Transactions",
         "books": "Books",
-        "members": "Members"
+        "members": "Members",
+        "find": "Find",
+        "professors": "Professors",
+        "manage": "Manage",
+        "myTransactions": "My Transactions"
     },
     "Profile": {
         "title": "Profile",

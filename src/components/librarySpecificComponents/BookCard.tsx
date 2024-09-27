@@ -109,7 +109,7 @@ const BookCard = ({ book }: { book: IBook }) => {
             </Button>
           </CardHeader>
           <CardContent className="absolute w-full bottom-0 p-0">
-            <div className="px-2 pt-1 pb-2 w-full flex flex-col justify-between gap-1 bg-black bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75 ">
+            <div className="px-2 pt-1 pb-2 w-full flex flex-col justify-between gap-1 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75 ">
               <div className="relative flex flex-col ">
                 <h3 className="text-lg font-semibold truncate">{book.title}</h3>
                 <p className="max-w-[70%] text-xs text-slate-600 truncate">

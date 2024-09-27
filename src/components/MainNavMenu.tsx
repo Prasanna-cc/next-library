@@ -20,21 +20,14 @@ const NavMenuComponent = ({ userDetails }: NavMenuProps) => {
   if (status === "loading") {
     return (
       <div className="flex items-center gap-2">
-        <Skeleton className="w-28 h-10 rounded-full" />
-        <Skeleton className="w-28 h-10 rounded-full" />
+        {/* <Skeleton className="w-28 h-10 rounded-full" /> */}
+        <Skeleton className="w-10 h-10 rounded-full" />
         <Skeleton className="w-10 h-10 rounded-full" />
       </div>
     );
   }
 
-  return session ? (
-    <>
-      <DashboardNavMenu />
-      <ProfileSheet userDetails={userDetails} />
-    </>
-  ) : (
-    <LoginDialog />
-  );
+  return <DashboardNavMenu userDetails={userDetails} />;
 };
 
 export const MainNavMenu = memo(NavMenuComponent);

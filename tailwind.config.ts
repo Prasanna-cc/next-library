@@ -23,6 +23,10 @@ const config: Config = {
           opacity: ["group-hover"],
         },
       },
+      backdropFilter: {
+        none: "none",
+        blur: "blur(5px)",
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -79,6 +83,22 @@ const config: Config = {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       keyframes: {
+        enterFromRight: {
+          "0%": { opacity: "0", transform: "translateX(200px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
+        enterFromLeft: {
+          "0%": { opacity: "0", transform: "translateX(-200px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
+        exitToRight: {
+          "0%": { opacity: "1", transform: "translateX(0)" },
+          "100%": { opacity: "0", transform: "translateX(200px)" },
+        },
+        exitToLeft: {
+          "0%": { opacity: "1", transform: "translateX(0)" },
+          "100%": { opacity: "0", transform: "translateX(-200px)" },
+        },
         "accordion-down": {
           from: {
             height: "0",
@@ -99,6 +119,16 @@ const config: Config = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "enter-from-left": "enterFromLeft 250ms ease forwards",
+        "enter-from-right": "enterFromRight 250ms ease forwards",
+        "exit-to-left": "exitToLeft 250ms ease forwards",
+        "exit-to-right": "exitToRight 250ms ease forwards",
+      },
+      width: {
+        viewport: "var(--radix-navigation-menu-viewport-width)",
+      },
+      height: {
+        viewport: "var(--radix-navigation-menu-viewport-height)",
       },
     },
   },

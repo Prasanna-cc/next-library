@@ -10,7 +10,11 @@
         "menu": "ಮೆನು",
         "allTransactions": "ಎಲ್ಲಾ ವಹಿವಾಟುಗಳು",
         "books": "ಪುಸ್ತಕಗಳು",
-        "members": "ಸದಸ್ಯರು"
+        "members": "ಸದಸ್ಯರು",
+        "find": "ಹುಡುಕಿ",
+        "professors": "ಪ್ರಾಧ್ಯಾಪಕರು",
+        "manage": "ನಿರ್ವಹಿಸಿ",
+        "myTransactions": "ನನ್ನ ವಹಿವಾಟುಗಳು"
     },
     "Profile": {
         "title": "ಪ್ರೊಫೈಲ್",

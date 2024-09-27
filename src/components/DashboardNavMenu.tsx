@@ -1,103 +1,159 @@
 "use client";
 
 import * as React from "react";
-// import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { MenuSquareIcon, Users2 } from "lucide-react";
 import {
-  Menubar,
-  MenubarMenu,
-  MenubarTrigger,
-  MenubarContent,
-  MenubarItem,
-} from "@/components/ui/menubar";
+  MenuIcon,
+  Users2,
+  BookOpen,
+  UserPlus,
+  FileText,
+  UserCog2,
+  UserCog,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
-import { Link, routing } from "@/i18n/routing";
+import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
+import { IMember } from "@/lib/models/member.model";
+import { ProfileSheet } from "./ProfileSheet";
+import { LoginDialog } from "./LoginForm";
+import { LocaleSelector } from "./LocaleSelecter";
+import { motion, AnimatePresence } from "framer-motion";
 
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
+interface NavProps {
+  userDetails: IMember | undefined | null;
 }
 
-export function DashboardNavMenu() {
+export function DashboardNavMenu({ userDetails }: NavProps) {
   const { data: session } = useSession();
   const t = useTranslations("MainNavMenu");
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+  const MenuItem = ({
+    href,
+    icon: Icon,
+    title,
+  }: {
+    href: string;
+    icon: React.ElementType;
+    title: string;
+  }) => (
+    <Link
+      href={href}
+      className="flex items-center space-x-2 p-2 rounded-md hover:bg-accent transition-colors"
+    >
+      <Icon className="h-5 w-5" />
+      <span>{title}</span>
+    </Link>
+  );
 
   return (
-    <div className="flex gap-1">
-      <Link href={"/dashboard/professors"}>
-        <Button variant={"outline"} className="rounded-full px-2">
-          <span className="flex gap-1 items-center">
-            <Users2 className="md:h-4 w-fit md:w-4" />{" "}
-            <span className="hidden md:inline-flex">Professors</span>
-          </span>
-        </Button>
-      </Link>
-      {session?.user.role === "admin" ? (
-        <Menubar className="border-none relative z-10 flex w-screen max-w-max items-center justify-center">
-          <MenubarMenu>
-            <MenubarTrigger>
-              <div className="flex items-center gap-1">
-                <MenuSquareIcon className="md:h-4 md:w-4" />
-                <span className="hidden md:inline-flex">{t("menu")}</span>
+    <nav className="relative z-10">
+      <div className="flex items-center justify-between w-full gap-2">
+        <div>
+          <Button
+            variant="ghost"
+            className="p-2"
+            onMouseEnter={() => setIsMenuOpen(true)}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <MenuIcon className="h-6 w-6" />
+            <span className="sr-only">Menu</span>
+          </Button>
+        </div>
+        <div>
+          {session ? (
+            <ProfileSheet userDetails={userDetails} />
+          ) : (
+            <LoginDialog />
+          )}
+        </div>
+      </div>
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 5 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="fixed left-0 right-0 top-[52px] z-50 overflow-hidden "
+            onMouseLeave={() => setIsMenuOpen(false)}
+          >
+            {/* Transparent backdrop */}
+            <div className="w-full bg-slate-100/95  border-b-slate-400 backdrop-blur-md flex justify-around gap-6 py-6 px-4 md:px-8 lg:px-16">
+              {/* Locale Selector - placed separately with its own container */}
+
+              {/* Main Menu Content */}
+              <div>
+                <h3 className="font-semibold mb-2">{t("find")}</h3>
+                <MenuItem
+                  href="/dashboard/professors"
+                  icon={Users2}
+                  title={t("professors")}
+                />
               </div>
-            </MenubarTrigger>
-            <MenubarContent>
-              <ul className="grid w-max gap-3 p-6">
-                <>
-                  <ListItem
-                    title={t("allTransactions")}
-                    href="/dashboard/admin/allTransactions"
-                  />
-                  {/* <ListItem
-                    title={t("userTransactions")}
+
+              {session?.user.role === "admin" && (
+                <div>
+                  <h3 className="font-semibold mb-2">{t("manage")}</h3>
+                  <div className="flex flex-col justify-between md:flex-row md:gap-6">
+                    <div className="flex flex-col">
+                      <MenuItem
+                        href="/dashboard/admin/allTransactions"
+                        icon={FileText}
+                        title={t("allTransactions")}
+                      />
+                      <MenuItem
+                        href="/dashboard/admin/books"
+                        icon={BookOpen}
+                        title={t("books")}
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <MenuItem
+                        href="/dashboard/admin/members"
+                        icon={UserCog}
+                        title={t("members")}
+                      />
+                      <MenuItem
+                        href="/dashboard/admin/professors"
+                        icon={UserCog2}
+                        title={t("professors")}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {session && session.user.role !== "admin" && (
+                <div>
+                  <h3 className="font-semibold mb-2">{t("manage")}</h3>
+                  <MenuItem
                     href="/dashboard/transactions"
-                  /> */}
-                  <ListItem title={t("books")} href="/dashboard/admin/books" />
-                  <ListItem
-                    title={t("members")}
-                    href="/dashboard/admin/members"
+                    icon={FileText}
+                    title={t("myTransactions")}
                   />
-                </>
-              </ul>
-            </MenubarContent>
-          </MenubarMenu>
-        </Menubar>
-      ) : (
-        // <Link title="My Transactions" href="/dashboard/transactions">
-        //   <Button variant="ghost">{t("userTransactions")}</Button>
-        // </Link>
-        ""
-      )}
-    </div>
+                </div>
+              )}
+              <div
+                className="relative z-10 w-fit"
+                onClick={(e: React.MouseEvent) => {
+                  // e.preventDefault();
+                  setIsMenuOpen(true);
+                }}
+              >
+                {/* <LocaleSelector
+                  onClick={(e: React.MouseEvent) => {
+                    e.preventDefault();
+                    setIsMenuOpen(true);
+                  }}
+                /> */}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
   );
 }
-
-const ListItem = React.forwardRef<
-  React.ElementRef<typeof Link>,
-  React.ComponentPropsWithoutRef<typeof Link> & { title: string }
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <MenubarItem asChild>
-        <Link
-          ref={ref}
-          className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          {children && (
-            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-              {children}
-            </p>
-          )}
-        </Link>
-      </MenubarItem>
-    </li>
-  );
-});
-ListItem.displayName = "ListItem";
