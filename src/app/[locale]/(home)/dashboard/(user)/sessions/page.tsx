@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
+import { ArrowLeft } from "lucide-react";
 
 export default function SessionPage({
   searchParams,
@@ -22,6 +23,11 @@ export default function SessionPage({
         <h1 className="text-3xl font-bold">Book Your Session</h1>
         {/* <span className="text-slate-500 text-sm">{t("description")}</span> */}
       </div>
+      <Link href={"/dashboard/professors"}>
+        <Button>
+          <ArrowLeft className="w-4 h-4 mr-2" /> Back
+        </Button>
+      </Link>
       <div className="flex flex-col gap-3 justify-between">
         <div className="w-full h-full">
           {searchParams && searchParams.eventLink ? (
@@ -45,7 +51,9 @@ export default function SessionPage({
                 Looks like there was a problem {":("}...
               </span>
               <Link href={"/dashboard/professors"}>
-                <Button>Go Back</Button>
+                <Button>
+                  <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                </Button>
               </Link>
             </div>
           )}

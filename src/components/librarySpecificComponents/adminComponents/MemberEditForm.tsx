@@ -39,7 +39,7 @@ const MemberEditForm = ({
   const [activeTab, setActiveTab] = useState("details");
   const { data: session } = useSession();
   const detailsForm = useForm<IMember>({
-    resolver: zodResolver(MemberSchema.omit({ password: true })),
+    resolver: zodResolver(MemberSchema.omit({ password: true, wallet: true })),
     defaultValues: member ?? undefined,
     mode: "onChange",
   });

@@ -46,6 +46,7 @@ export const Members = pgTable("members", {
   phoneNumber: text("phoneNumber").unique().notNull(),
   address: text("address").notNull(),
   password: text("password").unique().notNull(),
+  wallet: integer("wallet").default(0).notNull(),
   role: roleEnum("role").notNull().default("user"),
   status: statusEnum("status").notNull().default("verified"),
 });

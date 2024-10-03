@@ -106,8 +106,6 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
   async list(params: IPageRequest): Promise<IPagedResponse<IBook> | undefined> {
     let searchWhereClause: SQL | undefined;
     if (params.search) {
-      console.log("params.search: ", params.search);
-
       const search = `${params.search}`;
       searchWhereClause = sql`${Books.title} ILIKE ${`%${params.search}%`}
       OR ${Books.author} ILIKE ${`%${params.search}%`}

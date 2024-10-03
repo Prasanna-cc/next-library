@@ -34,6 +34,7 @@ export const MemberBaseSchema = z.object({
 
 export const MemberSchema = MemberBaseSchema.extend({
   id: z.number().int().min(1).optional(),
+  wallet: z.number().int().min(1),
   status: z
     .enum(["verified", "banned"], {
       message: "Status must be either 'verified' or 'banned'.",

@@ -33,13 +33,14 @@ import MemberEditForm from "./librarySpecificComponents/adminComponents/MemberEd
 import { IMember } from "@/lib/models/member.model";
 import { Badge } from "./ui/badge";
 import Image from "next/image";
+import UserCredits from "./PaymentComponents/UserCredits";
 
 interface ProfileSheetProps {
   userDetails: IMember | undefined | null;
 }
 
 export const ProfileSheet = ({ userDetails }: ProfileSheetProps) => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   if (!session || session === null) redirect(`/signin`);
   const [isEditing, setIsEditing] = useState(false);
   const handleBack = () => setIsEditing(false);
@@ -138,12 +139,21 @@ export const ProfileSheet = ({ userDetails }: ProfileSheetProps) => {
                           {session?.user?.email}
                         </p>
                       </div>
-                      <Badge
-                        variant={"default"}
-                        className="w-fit text-xs capitalize"
-                      >
-                        {session?.user?.role}
-                      </Badge>
+                      <div className="flex gap-2 items-center justify-between">
+                        {session?.user?.role && (
+                          <Badge
+                            variant={"default"}
+                            className="w-fit text-xs capitalize"
+                          >
+                            {session.user.role || userDetails?.role}
+                          </Badge>
+                        )}
+                        {status !== "loading" && userDetails && (
+                          <SheetClose>
+                            <UserCredits user={userDetails} />
+                          </SheetClose>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <Button

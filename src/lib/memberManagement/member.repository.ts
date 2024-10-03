@@ -1,6 +1,6 @@
 import { IRepository } from "../core/repository";
 import { IMember, IMemberBase, IMemberDetails } from "../models/member.model";
-import { MemberBaseSchema } from "../models/member.schema";
+import { MemberBaseSchema, MemberSchema } from "../models/member.schema";
 import { IPagedResponse, IPageRequest } from "../core/pagination";
 import { count, eq, ilike, like, or, SQL } from "drizzle-orm";
 import { VercelPgDatabase } from "drizzle-orm/vercel-postgres";
@@ -44,7 +44,7 @@ export class MemberRepository
 
   async update(
     MemberId: number,
-    data: Partial<IMemberBase>
+    data: Partial<IMember>
   ): Promise<IMemberDetails | undefined> {
     // Execution of queries:
     try {
@@ -54,7 +54,7 @@ export class MemberRepository
           ...oldMember,
           ...data,
         };
-        const validatedMember = MemberBaseSchema.parse(updatedMember);
+        const validatedMember = MemberSchema.parse(updatedMember);
         const result = await db
           .update(Members)
           .set(validatedMember)
@@ -94,6 +94,7 @@ export class MemberRepository
           email: Members.email,
           phoneNumber: Members.phoneNumber,
           address: Members.address,
+          wallet: Members.wallet,
           role: Members.role,
         })
         .from(Members)

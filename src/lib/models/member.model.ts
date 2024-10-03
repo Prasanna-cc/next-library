@@ -10,6 +10,7 @@ export interface IMemberBase {
 
 export interface IMember extends IMemberBase {
   id: number;
+  wallet: number;
   status: "verified" | "banned";
 }
 

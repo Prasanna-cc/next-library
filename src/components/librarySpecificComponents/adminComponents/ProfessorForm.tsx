@@ -62,7 +62,6 @@ const ProfessorForm = ({ handleBack, professorData }: ProfessorFormProps) => {
           null,
       };
       const response = await inviteProfessor(professorDetails);
-      console.log("response: ", response);
 
       if (!response?.message.includes("Failed")) {
         toast({

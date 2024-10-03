@@ -1,6 +1,6 @@
 "use server";
 
-import { IMemberBase, IMemberDetails } from "./models/member.model";
+import { IMember, IMemberBase, IMemberDetails } from "./models/member.model";
 import { comparePassword, hashPassword } from "./hashPassword";
 import { MemberRepository } from "./memberManagement/member.repository";
 // import { MemberSessRepository } from "./memberManagement/memberSess.repository";
@@ -169,7 +169,7 @@ export const deleteProfessor = async (MemberId: number) => {
 
 export const updateMember = async (
   MemberId: number,
-  data: Partial<IMemberBase>
+  data: Partial<IMember>
 ) => {
   try {
     return memberRepo.update(MemberId, data);
@@ -295,9 +295,7 @@ export async function inviteProfessor(
     // };
 
     const orgUri: string = AppEnvs.CALENDLEY_ORGANIZATION_URI;
-    console.log("orgUri: ", orgUri);
     const uuid = orgUri.split("/").pop()?.trim();
-    console.log("uuid: ", uuid);
     let invitationResult;
     if (!data.eventLink)
       invitationResult = await fetch(
@@ -321,12 +319,10 @@ export async function inviteProfessor(
       }
       return { message: "Professor created successfully!" };
     }
-    console.log("invitationResult: ", invitationResult);
 
     return { message: "Failed to invite professor." };
   } catch (err) {
     if (err instanceof Error) {
-      console.log(err.message);
       return { message: err.message || "Invalid input" };
     }
     // return { message: (err as Error).message };

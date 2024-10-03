@@ -15,7 +15,7 @@ import DeleteConfirmationDialog from "@/components/DeleteConfirmationDialog";
 import { deleteMember, registerMember, updateMember } from "@/lib/actions";
 import { toast } from "@/hooks/use-toast";
 import { IMember, IMemberBase } from "@/lib/models/member.model";
-import { MemberSchema } from "@/lib/models/member.schema";
+import { MemberBaseSchema } from "@/lib/models/member.schema";
 import { X } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import MemberEditForm from "./MemberEditForm";
@@ -58,13 +58,13 @@ export const onDeleteMember = async (id: number) => {
 };
 
 type MemberFormProps = {
-  member?: IMember;
+  member?: IMemberBase;
   handleBack?: () => void;
 };
 
 const MemberForm = ({ handleBack }: MemberFormProps) => {
-  const form = useForm<IMember>({
-    resolver: zodResolver(MemberSchema),
+  const form = useForm<IMemberBase>({
+    resolver: zodResolver(MemberBaseSchema),
     defaultValues: {
       name: "",
       age: 0,
@@ -147,14 +147,17 @@ const MemberForm = ({ handleBack }: MemberFormProps) => {
                 <Input
                   id={field.name}
                   type={field.type}
-                  {...form.register(field.name as keyof IMember, {
+                  {...form.register(field.name as keyof IMemberBase, {
                     valueAsNumber: field.type === "number",
                   })}
                 />
               </FormControl>
               <div className="text-red-600 min-h-4 overflow-x-auto no-scrollbar">
                 <FormMessage className="text-xs">
-                  {form.formState.errors[field.name as keyof IMember]?.message}
+                  {
+                    form.formState.errors[field.name as keyof IMemberBase]
+                      ?.message
+                  }
                 </FormMessage>
               </div>
             </FormItem>
